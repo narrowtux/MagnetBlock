@@ -1,0 +1,22 @@
+name: MagnetBlock
+main: com.narrowtux.MagnetBlock.MagnetBlock
+version: 0.1
+author: narrowtux
+description: MagnetBlock can be used to create automatic animated doors, big driving trains or transrapids.
+commands:
+    createstructure:
+        usage: /createstructure {name}
+        aliases: 
+            - mbcs
+    finishstructure:
+        usage: /finishstructure
+        aliases:
+            - mbfs
+    editstructure:
+        usage: /editstructure {name}
+        aliases: 
+            - mbes
+    removestructure:
+        usage: /removestructure {name}
+        aliases: 
+            - mbrs
