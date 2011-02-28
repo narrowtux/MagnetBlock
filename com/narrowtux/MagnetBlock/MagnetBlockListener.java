@@ -68,7 +68,10 @@ public class MagnetBlockListener extends BlockListener {
 				Vector player = pl.getLocation().toVector();
 				Vector move = block1.subtract(player);
 				move = move.normalize();
-
+				if(event.getPlayer().getItemInHand().getType().equals(Material.BONE)){
+					structure.rotate(new BlockPosition(event.getBlock()));
+					return;
+				}
 				if(event.getPlayer().getItemInHand().getType().equals(Material.FEATHER)){
 					move.multiply(new Vector(1,0,1));
 				} else if(event.getPlayer().getItemInHand().getType().equals(Material.STICK)){

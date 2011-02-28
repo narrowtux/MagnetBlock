@@ -3,6 +3,8 @@ package com.narrowtux.MagnetBlock;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.util.Vector;
+
 public class MagnetBlockStructure {
 	private List<MagnetBlockBlock> blocks = new ArrayList<MagnetBlockBlock>();
 	private BlockPosition origin = null;
@@ -14,7 +16,7 @@ public class MagnetBlockStructure {
 	public List<MagnetBlockBlock> getBlocks() {
 		return blocks;
 	}
-	
+
 	public void addBlock(MagnetBlockBlock block)
 	{
 		blocks.add(block);
@@ -23,7 +25,7 @@ public class MagnetBlockStructure {
 		}
 		block.setStructure(this);
 	}
-	
+
 	/**
 	 * @param origin the origin to set
 	 */
@@ -37,7 +39,7 @@ public class MagnetBlockStructure {
 	public BlockPosition getOrigin() {
 		return origin;
 	}
-	
+
 	public void removeBlock(MagnetBlockBlock block){
 		blocks.remove(block);
 		block.setStructure(null);
@@ -61,7 +63,7 @@ public class MagnetBlockStructure {
 	{
 		moveTo(vector.add(origin));
 	}
-	
+
 	public void moveTo(BlockPosition position)
 	{
 		BlockPosition vector = position.substract(origin);
@@ -70,15 +72,40 @@ public class MagnetBlockStructure {
 				return;
 			}
 		}
-		
+
 		for(MagnetBlockBlock block: blocks){
 			block.moveTo(block.getPosition().add(vector), 0);
 		}
 		for(MagnetBlockBlock block: blocks){
 			block.moveTo(block.getPosition().add(vector), 1);
 		}
-		
+
 		origin = position;
+		plugin.save();
+	}
+
+	public void rotate(BlockPosition origin){
+		//Test rotation
+		for(MagnetBlockBlock block:blocks)
+		{
+			BlockPosition pos = block.getPosition();
+			BlockPosition diff = pos.substract(origin);
+			if(!block.testMove(diff.rotated().add(origin))){
+				return;
+			}
+		}
+		for(MagnetBlockBlock block:blocks)
+		{
+			BlockPosition pos = block.getPosition();
+			BlockPosition diff = pos.substract(origin);
+			block.moveTo(diff.rotated().add(origin), 0);
+		}
+		for(MagnetBlockBlock block:blocks)
+		{
+			BlockPosition pos = block.getPosition();
+			BlockPosition diff = pos.substract(origin);
+			block.moveTo(diff.rotated().add(origin), 1);
+		}
 		plugin.save();
 	}
 }

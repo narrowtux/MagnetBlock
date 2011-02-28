@@ -112,4 +112,11 @@ public class BlockPosition{
 	public boolean equals(BlockPosition other){
 		return (x==other.x&&y==other.y&&z==other.z&&world==other.world);
 	}
+	
+	public BlockPosition rotated(){
+		BlockPosition result = new BlockPosition(this);
+		result.x = z;
+		result.z = -x;
+		return result;
+	}
 }
