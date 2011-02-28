@@ -1,11 +1,13 @@
 package com.narrowtux.MagnetBlock;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 public class MagnetBlockMagnet extends MagnetBlockBlock {
 	private boolean powered;
 	public MagnetBlockMagnet(Block block) {
 		super(block);
+		block.setType(Material.IRON_BLOCK);
 	}
 	/**
 	 * @param powered the powered to set

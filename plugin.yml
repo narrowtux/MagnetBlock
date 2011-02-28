@@ -20,3 +20,11 @@ commands:
         usage: /removestructure {name}
         aliases: 
             - mbrs
+    structurelist:
+        usage: /structurelist
+        aliases:
+            - mblist
+    structuremove:
+        usage: /structuremove {name} {x} {y} {z}
+        aliases:
+            - mbmove

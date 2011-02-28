@@ -9,6 +9,7 @@ public class MagnetBlockPlayer {
 	private static HashMap<String, MagnetBlockPlayer> instances = new HashMap<String, MagnetBlockPlayer>();
 	public static MagnetBlock plugin = null;
 	private RequestType requestType = RequestType.None;
+	private MagnetBlockStructure editing = null;
 
 	public Player getPlayer() {
 		return player;
@@ -43,6 +44,25 @@ public class MagnetBlockPlayer {
 	
 	public RequestType getRequestType() {
 		return requestType;
+	}
+
+	/**
+	 * @param editing the editing to set
+	 */
+	public void setEditing(MagnetBlockStructure editing) {
+		if(this.editing!=null)
+			this.editing.setEditingPlayer(null);
+		this.editing = editing;
+		if(this.editing!=null){
+			this.editing.setEditingPlayer(this);
+		}
+	}
+
+	/**
+	 * @return the editing
+	 */
+	public MagnetBlockStructure getEditing() {
+		return editing;
 	}
 	
 }

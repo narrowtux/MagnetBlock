@@ -1,16 +1,58 @@
 package com.narrowtux.MagnetBlock;
 
-public class BlockPosition {
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+
+public class BlockPosition{
 	private int x, y, z;
-	
-	BlockPosition(int x, int y, int z){
+	private World world;
+
+	BlockPosition(World world, int x, int y, int z){
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.world = world;
 	}
 	
-	public operator+(BlockPosition other){
-		
+	BlockPosition(BlockPosition other)
+	{
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		world = other.world;
+	}
+	
+	BlockPosition(MagnetBlockBlock magnetBlock)
+	{
+		Block block = magnetBlock.getBlock();
+		x = block.getX();
+		y = block.getY();
+		z = block.getZ();
+		world = block.getWorld();
+	}
+	
+	BlockPosition(Block block){
+		x = block.getX();
+		y = block.getY();
+		z = block.getZ();
+		world = block.getWorld();
+	}
+	
+	public BlockPosition add(BlockPosition other){
+		BlockPosition result = new BlockPosition(this);
+		result.x+=other.x;
+		result.y+=other.y;
+		result.z+=other.z;
+		return result;
+	}
+	
+	public BlockPosition negative(){
+		return new BlockPosition(world,-x,-y,-z);
+	}
+	
+	public BlockPosition substract(BlockPosition other){
+		return new BlockPosition(this.add(other.negative()));
 	}
 	
 	/**
@@ -53,5 +95,21 @@ public class BlockPosition {
 	 */
 	public int getZ() {
 		return z;
+	}
+	
+	public World getWorld() {
+		return world;
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
+	public Location toLocation(){
+		return new Location(world, x, y, z);
+	}
+	
+	public boolean equals(BlockPosition other){
+		return (x==other.x&&y==other.y&&z==other.z&&world==other.world);
 	}
 }
