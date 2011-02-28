@@ -43,8 +43,10 @@ public class MagnetBlockBlock {
 			}
 		}
 		MagnetBlockBlock b = new MagnetBlockBlock(pos.getWorld().getBlockAt(pos.toLocation()));
+		instances.add(b);
 		return b;
 	}
+	
 	public static boolean exists(BlockPosition pos){
 		for(MagnetBlockBlock b:instances)
 		{
@@ -80,10 +82,11 @@ public class MagnetBlockBlock {
 		if(block!=null){
 			if(!block.getType().equals(Material.AIR)){
 				MagnetBlockBlock mblock = getBlock(new BlockPosition(block));
-				if(mblock.getStructure()==structure){
+				if(mblock.getStructure()!=null&&mblock.getStructure().equals(structure)){
 					return true;
 				}
-				plugin.log.log(Level.INFO, "Block collides with other block!");
+				plugin.log.log(Level.INFO, "Block collides with"+structure);
+				plugin.log.log(Level.INFO, "Block collides with other block ("+block.getType().toString()+").");
 				return false;
 			}
 		}

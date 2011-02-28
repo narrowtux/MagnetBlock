@@ -1,15 +1,19 @@
 package com.narrowtux.MagnetBlock;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 public class MagnetBlock extends JavaPlugin {
 	public Logger log = null;
 	private HashMap<String, MagnetBlockStructure> structures = new HashMap<String, MagnetBlockStructure>();
@@ -279,6 +284,146 @@ public class MagnetBlock extends JavaPlugin {
 		{
 			return;
 		}
-		
+		FileInputStream input;
+		String versionString = "0.0";
+		String [] structs = null;
+		try {
+			input = new FileInputStream(mainInfo.getAbsoluteFile());
+			InputStreamReader ir = new InputStreamReader(input);
+			BufferedReader r = new BufferedReader(ir);
+			while(true){
+				String line = r.readLine();
+				if(line==null||line.isEmpty()){
+					break;
+				}
+				if(line.startsWith("#")){
+					continue;
+				}
+				String[] splt = line.split(":");
+				if(splt.length==2){
+					String key = splt[0];
+					String value = splt[1];
+					
+					//Key handling
+					if(key.equals("version")){
+						versionString = value;
+					}
+					if(key.equals("structures")){
+						structs = value.split(",");
+					}
+				}
+			}
+			r.close();
+			
+			//Structure loading!
+			
+			if(structs == null)
+			{
+				return;
+			}
+			for(String name:structs){
+				File structDir = new File(dataFolder.getAbsolutePath()+"/"+name+".structure/");
+				if(!structDir.exists()){
+					continue;
+				}
+				/**BEGIN info.csv**/
+				MagnetBlockStructure structure = new MagnetBlockStructure();
+				structures.put(name, structure);
+				File structInfo = new File(structDir.getAbsolutePath()+"/info.csv");
+				if(!structInfo.exists()){
+					log.log(Level.SEVERE, "info.csv for "+name+".structure not found. Continuing...");
+					structures.remove(name);
+					continue;
+				}
+				input = new FileInputStream(structInfo.getAbsoluteFile());
+
+				ir = new InputStreamReader(input);
+				r = new BufferedReader(ir);
+				BlockPosition pos = new BlockPosition(null, 0, 0, 0);
+				structure.setOrigin(pos);
+				while(true){
+					String line = r.readLine();
+					if(line==null||line.isEmpty()){
+						break;
+					}
+					if(line.startsWith("#")){
+						continue;
+					}
+					String[] splt = line.split(":");
+					if(splt.length==2){
+						String key = splt[0];
+						String value = splt[1];
+						
+						//Key handling
+						if(key.equals("name")){
+							name = value;
+						}
+						if(key.equals("origin")){
+							String [] coords = value.split(",");
+							if(coords.length==3){
+								int x = Integer.valueOf(coords[0]);
+								int y = Integer.valueOf(coords[1]);
+								int z = Integer.valueOf(coords[2]);
+								pos.setX(x);
+								pos.setY(y);
+								pos.setZ(z);
+							}
+						}
+						if(key.equals("world")){
+							String [] values = value.split(",");
+							if(values.length==2){
+								World w = getServer().createWorld(values[0], Environment.valueOf(values[1]));
+								if(w!=null)
+								{
+									pos.setWorld(w);
+								}
+							}
+						}
+					}
+				}
+				r.close();
+				/**END info.csv**/
+				
+				/**BEGIN blocks.csv**/
+				File structBlocks = new File(structDir.getAbsolutePath()+"/blocks.csv");
+				if(!structBlocks.exists()){
+					log.log(Level.SEVERE, "Could not find blocks file for "+name+".structure. Continuing...");
+					structures.remove(name);
+					continue;
+				}
+				input = new FileInputStream(structBlocks.getAbsoluteFile());
+				ir = new InputStreamReader(input);
+				r = new BufferedReader(ir);
+				while(true){
+					String line = r.readLine();
+					if(line==null||line.isEmpty()){
+						break;
+					}
+					if(line.startsWith("#")){
+						continue;
+					}
+					String[] splt = line.split(",");
+					if(splt.length==5){
+						int x = Integer.valueOf(splt[0]);
+						int y = Integer.valueOf(splt[1]);
+						int z = Integer.valueOf(splt[2]);
+						World w = pos.getWorld();
+						Block b = w.getBlockAt(x, y, z);
+						Material m = Material.valueOf(splt[3]);
+						byte data = Byte.valueOf(splt[4]);
+						b.setType(m);
+						b.setData(data);
+						MagnetBlockBlock block = MagnetBlockBlock.getBlock(new BlockPosition(b));
+						structure.addBlock(block);
+					} else {
+						continue;
+					}
+				}
+				r.close();
+				/**END blocks.csv**/
+			}
+		} catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 }
