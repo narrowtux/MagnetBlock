@@ -79,5 +79,6 @@ public class MagnetBlockStructure {
 		}
 		
 		origin = position;
+		plugin.save();
 	}
 }

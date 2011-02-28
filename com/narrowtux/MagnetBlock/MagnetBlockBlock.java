@@ -80,7 +80,7 @@ public class MagnetBlockBlock {
 		World world = pos.getWorld();
 		Block block = world.getBlockAt(pos.toLocation());
 		if(block!=null){
-			if(!block.getType().equals(Material.AIR)){
+			if(!isEmptyBlock(block)){
 				MagnetBlockBlock mblock = getBlock(new BlockPosition(block));
 				if(mblock.getStructure()!=null&&mblock.getStructure().equals(structure)){
 					return true;
@@ -104,5 +104,16 @@ public class MagnetBlockBlock {
 			block.setType(material);
 			block.setData(data);
 		}
+	}
+	
+	public boolean isEmptyBlock(Block block){
+		if(block.getType().equals(Material.AIR)){
+			return true;
+		}
+		if(block.getType().equals(Material.STATIONARY_WATER)||block.getType().equals(Material.STATIONARY_LAVA)){
+			System.out.println("water level:"+block.getData());
+			return block.getData()>0;
+		}
+		return false;
 	}
 }
