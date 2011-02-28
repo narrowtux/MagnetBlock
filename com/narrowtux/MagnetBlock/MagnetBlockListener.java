@@ -3,7 +3,6 @@ package com.narrowtux.MagnetBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -50,8 +49,10 @@ public class MagnetBlockListener extends BlockListener {
 
 	@Override 
 	public void onBlockDamage(BlockDamageEvent event){
+		// TODO: Check if the block gets destroyed by tnt or a creeper.
 		if(event.getPlayer()==null)
 		{
+			System.out.println("A block has been damaged without a player: "+event.getBlock().getType().toString()+" damage: "+event.getDamageLevel());
 			return;
 		}
 		BlockPosition pos = new BlockPosition(event.getBlock());
@@ -59,8 +60,6 @@ public class MagnetBlockListener extends BlockListener {
 		if(block.getStructure()!=null){
 			MagnetBlockStructure structure = block.getStructure();
 			if(event.getDamageLevel().getLevel()==0){
-				BlockPosition vector = null;
-				BlockPosition testblock;
 				Player pl = event.getPlayer();
 				World w = event.getBlock().getWorld();
 				Vector block1 = event.getBlock().getLocation().toVector();
@@ -96,8 +95,6 @@ public class MagnetBlockListener extends BlockListener {
 		MagnetBlockBlock block = MagnetBlockBlock.getBlock(pos);
 		if(block.getStructure()!=null){
 			MagnetBlockStructure structure = block.getStructure();
-			BlockPosition vector = null;
-			BlockPosition testblock;
 			Player pl = event.getPlayer();
 			World w = event.getBlock().getWorld();
 			Vector block1 = event.getBlock().getLocation().toVector();

@@ -145,7 +145,7 @@ public class MagnetBlock extends JavaPlugin {
 				World world = player.getPlayer().getLocation().getWorld();
 				BlockPosition loc = new BlockPosition(world, x,y,z);
 				if(structures.containsKey(name1)){
-					structures.get(name1).moveBy(loc);
+					structures.get(name1).setTarget(loc.add(structures.get(name1).getOrigin()));
 					save();
 					return true;
 				} else {
@@ -287,6 +287,7 @@ public class MagnetBlock extends JavaPlugin {
 			return;
 		}
 		FileInputStream input;
+		@SuppressWarnings("unused")
 		String versionString = "0.0";
 		String [] structs = null;
 		try {

@@ -1,7 +1,6 @@
 package com.narrowtux.MagnetBlock;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -84,8 +83,9 @@ public class MagnetBlockBlock {
 				MagnetBlockBlock mblock = getBlock(new BlockPosition(block));
 				if(mblock.getStructure()!=null&&mblock.getStructure().equals(structure)){
 					return true;
+				} else {
+					plugin.log.log(Level.INFO, "Block collides with"+structure);
 				}
-				plugin.log.log(Level.INFO, "Block collides with"+structure);
 				plugin.log.log(Level.INFO, "Block collides with other block ("+block.getType().toString()+").");
 				return false;
 			}

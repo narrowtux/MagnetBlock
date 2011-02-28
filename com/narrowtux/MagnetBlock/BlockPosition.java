@@ -39,6 +39,14 @@ public class BlockPosition{
 		world = block.getWorld();
 	}
 	
+	BlockPosition(Location loc)
+	{
+		x = loc.getBlockX();
+		y = loc.getBlockY();
+		z = loc.getBlockZ();
+		world = loc.getWorld();
+	}
+	
 	public BlockPosition add(BlockPosition other){
 		BlockPosition result = new BlockPosition(this);
 		result.x+=other.x;

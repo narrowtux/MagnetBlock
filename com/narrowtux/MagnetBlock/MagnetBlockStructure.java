@@ -3,6 +3,9 @@ package com.narrowtux.MagnetBlock;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class MagnetBlockStructure {
@@ -10,6 +13,8 @@ public class MagnetBlockStructure {
 	private BlockPosition origin = null;
 	private MagnetBlockPlayer editingPlayer = null;
 	static MagnetBlock plugin = null;
+	private StructureAnimation animation = null;
+	private int animationId = 0;
 	/**
 	 * @return the blocks
 	 */
@@ -79,6 +84,19 @@ public class MagnetBlockStructure {
 		for(MagnetBlockBlock block: blocks){
 			block.moveTo(block.getPosition().add(vector), 1);
 		}
+		/*
+		for(Player player:getPassengers()){
+			Vector oldpos = player.getLocation().toVector();
+			Vector newpos = vector.toLocation().toVector().add(oldpos);
+			float yaw, pitch;
+			yaw = player.getLocation().getYaw();
+			pitch = player.getLocation().getPitch();
+			Location newloc = newpos.toLocation(player.getWorld());
+			newloc.setYaw(yaw);
+			newloc.setPitch(pitch);
+			player.teleportTo(newloc);
+		}
+		*/
 
 		origin = position;
 		plugin.save();
@@ -107,5 +125,34 @@ public class MagnetBlockStructure {
 			block.moveTo(diff.rotated().add(origin), 1);
 		}
 		plugin.save();
+	}
+	
+	public List<Player> getPassengers(){
+		List<Player> result = new ArrayList<Player>();
+		for(LivingEntity entity:origin.getWorld().getLivingEntities()){
+			if(entity instanceof Player){
+				Player player = (Player)entity;
+				Vector plvec = player.getLocation().toVector();
+				Vector orvec = origin.toLocation().toVector();
+				if(plvec.isInSphere(orvec, 5)){
+					result.add(player);
+				}
+			}
+		}
+		return result;
+	}
+	
+	public void endAnimation(){
+		if(animation!=null)
+		{
+			plugin.getServer().getScheduler().cancelTask(animationId);
+			animation = null;
+		}
+	}
+	
+	public void setTarget(BlockPosition pos){
+		endAnimation();
+		animation = new StructureAnimation(this, pos);
+		animationId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, animation, 0, 10);
 	}
 }
