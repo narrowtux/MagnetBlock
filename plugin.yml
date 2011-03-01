@@ -28,3 +28,7 @@ commands:
         usage: /structuremove {name} {x} {y} {z}
         aliases:
             - mbmove
+    structureaddmagnet:
+        usage: /structureaddmagnet {name}
+        aliases:
+            - mbam

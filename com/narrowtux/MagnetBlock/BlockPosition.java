@@ -63,6 +63,22 @@ public class BlockPosition{
 		return new BlockPosition(this.add(other.negative()));
 	}
 	
+	public BlockPosition multiply(BlockPosition other){
+		BlockPosition result = new BlockPosition(world,0,0,0);
+		result.x = x*other.x;
+		result.y = y*other.y;
+		result.z = z*other.z;
+		return result;
+	}
+	
+	public BlockPosition multiply(int x, int y, int z)
+	{
+		BlockPosition result = new BlockPosition(world,0,0,0);
+		result.x = x*this.x;
+		result.y = y*this.y;
+		result.z = z*this.z;
+		return result;
+	}
 	/**
 	 * @param x the x to set
 	 */

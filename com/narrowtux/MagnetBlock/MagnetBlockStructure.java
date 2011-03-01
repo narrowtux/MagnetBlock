@@ -3,7 +3,7 @@ package com.narrowtux.MagnetBlock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -15,6 +15,23 @@ public class MagnetBlockStructure {
 	static MagnetBlock plugin = null;
 	private StructureAnimation animation = null;
 	private int animationId = 0;
+	private boolean ironset = false;
+	private List<MagnetBlockMagnet> magnets = new ArrayList<MagnetBlockMagnet>();
+	
+	public List<MagnetBlockMagnet> getMagnets() {
+		return magnets;
+	}
+
+	public void addMagnet(MagnetBlockMagnet magnet){
+		magnets.add(magnet);
+		magnet.setStructure(this);
+	}
+	
+	public void removeMagnet(MagnetBlockMagnet magnet){
+		magnets.remove(magnet);
+		magnet.setStructure(null);
+	}
+	
 	/**
 	 * @return the blocks
 	 */
@@ -25,8 +42,12 @@ public class MagnetBlockStructure {
 	public void addBlock(MagnetBlockBlock block)
 	{
 		blocks.add(block);
-		if(blocks.size()==1){
+		if(origin == null){
 			origin = new BlockPosition(block);
+		}
+		if(block.getBlock().getType().equals(Material.IRON_BLOCK)&&!ironset){
+			origin = new BlockPosition(block);
+			ironset = true;
 		}
 		block.setStructure(this);
 	}
@@ -71,19 +92,13 @@ public class MagnetBlockStructure {
 
 	public void moveTo(BlockPosition position)
 	{
+		if(position.equals(new BlockPosition(position.getWorld(),0,0,0))){
+			return;
+		}
 		BlockPosition vector = position.substract(origin);
-		for(MagnetBlockBlock block: blocks){
-			if(!block.testMove(block.getPosition().add(vector))){
-				return;
-			}
-		}
-
-		for(MagnetBlockBlock block: blocks){
-			block.moveTo(block.getPosition().add(vector), 0);
-		}
-		for(MagnetBlockBlock block: blocks){
-			block.moveTo(block.getPosition().add(vector), 1);
-		}
+		realMove(vector.multiply(1, 0, 0));
+		realMove(vector.multiply(0, 1, 0));
+		realMove(vector.multiply(0, 0, 1));
 		/*
 		for(Player player:getPassengers()){
 			Vector oldpos = player.getLocation().toVector();
@@ -101,7 +116,25 @@ public class MagnetBlockStructure {
 		origin = position;
 		plugin.save();
 	}
+	
+	private void realMove(BlockPosition vector){
+		if(vector.equals(new BlockPosition(vector.getWorld(), 0,0,0))){
+			return;
+		}
+		for(MagnetBlockBlock block: blocks){
+			if(!block.testMove(block.getPosition().add(vector))){
+				return;
+			}
+		}
 
+		for(MagnetBlockBlock block: blocks){
+			block.moveTo(block.getPosition().add(vector), 0);
+		}
+		for(MagnetBlockBlock block: blocks){
+			block.moveTo(block.getPosition().add(vector), 1);
+		}
+	}
+	
 	public void rotate(BlockPosition origin){
 		//Test rotation
 		for(MagnetBlockBlock block:blocks)

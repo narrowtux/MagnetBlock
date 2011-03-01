@@ -52,6 +52,7 @@ public class MagnetBlock extends JavaPlugin {
 		pm.registerEvent(Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
 		pm.registerEvent(Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
 		pm.registerEvent(Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Normal, this);
+		pm.registerEvent(Type.REDSTONE_CHANGE, blockListener, Priority.Normal, this);
 		PluginDescriptionFile pdf = getDescription();
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been enabled.");
 	}
@@ -78,6 +79,7 @@ public class MagnetBlock extends JavaPlugin {
 				structures.put(name1, structure);
 				player.setEditing(structure);
 				player.getPlayer().sendMessage(ChatColor.GREEN+"Place your blocks now!");
+				player.setRequestType(RequestType.EditStructure);
 				return true;
 			} else {
 				return false;
@@ -90,6 +92,7 @@ public class MagnetBlock extends JavaPlugin {
 				if(structures.containsKey(args[0])){
 					player.setEditing(structures.get(args[0]));
 					sender.sendMessage(ChatColor.GREEN+"Edit your strucutre now!");
+					player.setRequestType(RequestType.EditStructure);
 				} else {
 					sender.sendMessage(ChatColor.RED+"This Structure does not exist.");
 				}
@@ -102,6 +105,7 @@ public class MagnetBlock extends JavaPlugin {
 			if(args.length==1){
 				if(structures.containsKey(args[0])){
 					player.setEditing(null);
+					player.setRequestType(RequestType.None);
 					structures.remove(args[0]);
 					sender.sendMessage(ChatColor.GREEN+"Structure deleted.");
 					save();
@@ -116,6 +120,7 @@ public class MagnetBlock extends JavaPlugin {
 			if(player.getEditing()!=null){
 				sender.sendMessage(ChatColor.GREEN+"Finished editing!");
 				player.setEditing(null);
+				player.setRequestType(RequestType.None);
 				save();
 			} else {
 				player.getPlayer().sendMessage(ChatColor.RED+"You aren't editing any structures.");
@@ -129,7 +134,7 @@ public class MagnetBlock extends JavaPlugin {
 			sender.sendMessage(ChatColor.BLUE+"==================");
 			String list = "";
 			for(String key: structures.keySet()){
-				list+=key+", ";
+				list+=key+" "+structures.get(key).getMagnets().size()+" magnets, ";
 			}
 			sender.sendMessage(list);
 			return true;
@@ -153,6 +158,24 @@ public class MagnetBlock extends JavaPlugin {
 				}
 			} else {
 				return false;
+			}
+		} else if(cmd.getName().equals("structureaddmagnet")){
+			/*******************
+			 *    ADD MAGNET   *
+			 *******************/
+			if(args.length==1){
+				String name1 = args[0];
+				if(structures.containsKey(name1)){
+					MagnetBlockStructure structure = structures.get(name1);
+					player.setEditing(structure);
+					player.setRequestType(RequestType.AddMagnet);
+					sender.sendMessage(ChatColor.GREEN+"Place an iron block now!");
+					System.out.println("You can place an iron block!");
+					return true;
+				} else {
+
+					System.out.println("Structure not found!");
+				}
 			}
 		}
 		return false;
@@ -267,6 +290,33 @@ public class MagnetBlock extends JavaPlugin {
 					w.write(pos.getX()+","+pos.getY()+","+pos.getZ()+",");
 					w.write(material.toString()+",");
 					w.write(String.valueOf(data));
+					w.write("\n");
+				}
+				w.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			File magnetsFile = new File(sdir.getAbsolutePath()+"/magnets.csv");
+			if(!magnetsFile.exists()){
+				try {
+					blocksFile.createNewFile();
+				} catch (IOException e) {
+					log.log(Level.SEVERE, "magnets.csv for a structure could not be created. Not saving.");
+					return;
+				}
+			}
+			try {
+				FileOutputStream output = null;
+				try {
+					output = new FileOutputStream(magnetsFile.getAbsoluteFile());
+				} catch (FileNotFoundException e) {
+					log.log(Level.SEVERE, "This is weird. magnets.csv not found after creating it.");
+					return;
+				}
+				BufferedWriter w = new BufferedWriter(new OutputStreamWriter(output));
+				for(MagnetBlockMagnet block:structure.getMagnets()){
+					BlockPosition pos = block.getPosition();
+					w.write(pos.getX()+","+pos.getY()+","+pos.getZ());
 					w.write("\n");
 				}
 				w.close();
@@ -418,6 +468,40 @@ public class MagnetBlock extends JavaPlugin {
 						b.setData(data);
 						MagnetBlockBlock block = MagnetBlockBlock.getBlock(new BlockPosition(b));
 						structure.addBlock(block);
+					} else {
+						continue;
+					}
+				}
+				r.close();
+				/**END blocks.csv**/
+				
+				/**BEGIN magnets.csv**/
+				File magnetsFile = new File(structDir.getAbsolutePath()+"/magnets.csv");
+				if(!magnetsFile.exists()){
+					log.log(Level.SEVERE, "Could not find magnets file for "+name+".structure. Continuing...");
+					structures.remove(name);
+					continue;
+				}
+				input = new FileInputStream(magnetsFile.getAbsoluteFile());
+				ir = new InputStreamReader(input);
+				r = new BufferedReader(ir);
+				while(true){
+					String line = r.readLine();
+					if(line==null||line.isEmpty()){
+						break;
+					}
+					if(line.startsWith("#")){
+						continue;
+					}
+					String[] splt = line.split(",");
+					if(splt.length==3){
+						int x = Integer.valueOf(splt[0]);
+						int y = Integer.valueOf(splt[1]);
+						int z = Integer.valueOf(splt[2]);
+						World w = pos.getWorld();
+						Block b = w.getBlockAt(x, y, z);
+						MagnetBlockMagnet block = MagnetBlockMagnet.getBlock(new BlockPosition(b));
+						structure.addMagnet(block);
 					} else {
 						continue;
 					}
