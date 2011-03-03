@@ -94,15 +94,19 @@ public class MagnetBlockBlock {
 	}
 
 	public void moveTo(BlockPosition pos, int step){
-		if(step==0){
+		switch(step){
+		case 0:
 			material = block.getType();
 			data = block.getData();
+			break;
+		case 1:
 			block.setType(Material.AIR);
-		}
-		if(step==1){
+			break;
+		case 2:
 			block = pos.getWorld().getBlockAt(pos.toLocation());
 			block.setType(material);
 			block.setData(data);
+			break;
 		}
 	}
 	

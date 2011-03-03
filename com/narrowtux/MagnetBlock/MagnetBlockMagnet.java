@@ -67,6 +67,13 @@ public class MagnetBlockMagnet{
 	public MagnetBlockStructure getStructure() {
 		return structure;
 	}
+	
+	public static void removeMagnet(MagnetBlockMagnet magnet)
+	{
+		magnet.getStructure().removeMagnet(magnet);
+		instances.remove(magnet);
+	}
+	
 	public static boolean exists(BlockPosition blockPosition) {
 		for(MagnetBlockMagnet magnet:instances)
 		{

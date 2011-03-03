@@ -106,9 +106,17 @@ public class MagnetBlock extends JavaPlugin {
 				if(structures.containsKey(args[0])){
 					player.setEditing(null);
 					player.setRequestType(RequestType.None);
+					MagnetBlockStructure struct = structures.get(args[0]);
+					for(MagnetBlockBlock b:struct.getBlocks()){
+						b.setStructure(null);
+					}
+					for(MagnetBlockMagnet m:struct.getMagnets()){
+						m.setStructure(null);
+					}
 					structures.remove(args[0]);
 					sender.sendMessage(ChatColor.GREEN+"Structure deleted.");
 					save();
+					return true;
 				} else {
 					sender.sendMessage(ChatColor.RED+"This Structure does not exist.");
 				}
@@ -176,6 +184,15 @@ public class MagnetBlock extends JavaPlugin {
 
 					System.out.println("Structure not found!");
 				}
+			}
+		}else if(cmd.getName().equals("structureremovemagnet")){
+			/*******************
+			 *  REMOVE MAGNET  *
+			 *******************/
+			if(args.length==0){
+				player.setRequestType(RequestType.RemoveMagnet);
+				sender.sendMessage(ChatColor.GREEN+"Touch your magnet now.");
+				return true;
 			}
 		}
 		return false;

@@ -9,6 +9,7 @@ public class StructureAnimation implements Runnable {
 	private Vector v;
 	private BlockPosition targetPosition;
 	private BlockPosition lastPosition;
+	private int stucks = 0;
 	private int stepsneeded;
 	private int steps = 0;
 	public StructureAnimation(MagnetBlockStructure structure, BlockPosition targetPos){
@@ -25,7 +26,12 @@ public class StructureAnimation implements Runnable {
 		lastPosition = new BlockPosition(structure.getOrigin());
 		structure.moveTo(new BlockPosition(currentPos.toLocation(structure.getOrigin().getWorld())));
 		steps++;
-		if(targetPosition.equals(structure.getOrigin())||lastPosition.equals(structure.getOrigin())||steps==stepsneeded){
+		if(lastPosition.equals(structure.getOrigin())){
+			stucks++;
+		} else {
+			stucks = 0;
+		}
+		if(targetPosition.equals(structure.getOrigin())||stucks==3||steps==stepsneeded){
 			structure.endAnimation();
 		}
 	}

@@ -1,5 +1,7 @@
 package com.narrowtux.MagnetBlock;
 
+import javax.swing.text.rtf.RTFEditorKit;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,6 +14,7 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockRightClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class MagnetBlockListener extends BlockListener {
@@ -66,36 +69,44 @@ public class MagnetBlockListener extends BlockListener {
 	@Override 
 	public void onBlockDamage(BlockDamageEvent event){
 		// TODO: Check if the block gets destroyed by tnt or a creeper.
-		if(event.getPlayer()==null)
-		{
-			System.out.println("A block has been damaged without a player: "+event.getBlock().getType().toString()+" damage: "+event.getDamageLevel());
-			return;
+
+		if(event.getDamageLevel().getLevel()!=0){
+			//return;
 		}
 		BlockPosition pos = new BlockPosition(event.getBlock());
 		MagnetBlockBlock block = MagnetBlockBlock.getBlock(pos);
 		if(block.getStructure()!=null){
 			MagnetBlockStructure structure = block.getStructure();
-			if(event.getDamageLevel().getLevel()==0){
-				Player pl = event.getPlayer();
-				World w = event.getBlock().getWorld();
-				Vector block1 = event.getBlock().getLocation().toVector();
-				block1.add(new Vector(0.5,0.5,0.5));
-				Vector player = pl.getLocation().toVector();
-				Vector move = block1.subtract(player);
-				move = move.normalize();
-				if(event.getPlayer().getItemInHand().getType().equals(Material.BONE)){
-					structure.rotate(new BlockPosition(event.getBlock()));
-					return;
-				}
-				if(event.getPlayer().getItemInHand().getType().equals(Material.FEATHER)){
-					move.multiply(new Vector(1,0,1));
-				} else if(event.getPlayer().getItemInHand().getType().equals(Material.STICK)){
-					move.multiply(new Vector(0,1,0));
-				} else {
-					move.multiply(new Vector(0,0,0));
-				}
-				BlockPosition vec = new BlockPosition(w, (int)Math.round(move.getX()),(int)Math.round(move.getY()),(int)Math.round(move.getZ()));
-				structure.moveBy(vec);
+			Player pl = event.getPlayer();
+			World w = event.getBlock().getWorld();
+			Vector block1 = event.getBlock().getLocation().toVector();
+			block1.add(new Vector(0.5,0.5,0.5));
+			Vector player = pl.getLocation().toVector();
+			Vector move = block1.subtract(player);
+			move = move.normalize();
+			if(event.getPlayer().getItemInHand().getType().equals(Material.BONE)){
+				structure.rotate(new BlockPosition(event.getBlock()));
+				return;
+			}
+			if(event.getPlayer().getItemInHand().getType().equals(Material.FEATHER)){
+				move.multiply(new Vector(1,0,1));
+			} else if(event.getPlayer().getItemInHand().getType().equals(Material.STICK)){
+				move.multiply(new Vector(0,1,0));
+			} else {
+				move.multiply(new Vector(0,0,0));
+			}
+			BlockPosition vec = new BlockPosition(w, (int)Math.round(move.getX()),(int)Math.round(move.getY()),(int)Math.round(move.getZ()));
+			structure.moveBy(vec);
+		}
+		if(MagnetBlockMagnet.exists(pos)){
+			MagnetBlockPlayer player = MagnetBlockPlayer.getPlayerByName(event.getPlayer().getName());
+			if(player.getRequestType().equals(RequestType.RemoveMagnet)){
+				MagnetBlockMagnet magnet = MagnetBlockMagnet.getBlock(pos);
+				MagnetBlockMagnet.removeMagnet(magnet);
+				Block b = magnet.getBlock();
+				Material type = b.getType();
+				b.setType(Material.AIR);
+				b.getWorld().dropItemNaturally(new BlockPosition(b).toLocation(), new ItemStack(type.getId()));
 			}
 		}
 	}
@@ -130,7 +141,7 @@ public class MagnetBlockListener extends BlockListener {
 			structure.moveBy(vec);
 		}
 	}
-	
+
 	@Override
 	public void onBlockRedstoneChange(BlockRedstoneEvent event)
 	{
@@ -143,7 +154,9 @@ public class MagnetBlockListener extends BlockListener {
 			if(bf.getType().equals(Material.IRON_BLOCK)){
 				if(MagnetBlockMagnet.exists(new BlockPosition(bf))){
 					MagnetBlockMagnet block = MagnetBlockMagnet.getBlock(new BlockPosition(bf));
-					block.getStructure().setTarget(block.getPosition());
+					block.getStructure().setTarget(new BlockPosition(bf));
+				} else {
+					System.out.println("Magnet not found at "+bf.getLocation());
 				}
 			}
 		}

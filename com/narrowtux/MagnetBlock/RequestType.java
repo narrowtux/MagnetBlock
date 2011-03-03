@@ -5,4 +5,5 @@ public enum RequestType {
 	SetReferenceMagnet,
 	None,
 	EditStructure,
+	RemoveMagnet,
 }

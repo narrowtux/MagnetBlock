@@ -2,8 +2,11 @@ package com.narrowtux.MagnetBlock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -17,7 +20,7 @@ public class MagnetBlockStructure {
 	private int animationId = 0;
 	private boolean ironset = false;
 	private List<MagnetBlockMagnet> magnets = new ArrayList<MagnetBlockMagnet>();
-	
+
 	public List<MagnetBlockMagnet> getMagnets() {
 		return magnets;
 	}
@@ -25,13 +28,15 @@ public class MagnetBlockStructure {
 	public void addMagnet(MagnetBlockMagnet magnet){
 		magnets.add(magnet);
 		magnet.setStructure(this);
+		plugin.save();
 	}
-	
+
 	public void removeMagnet(MagnetBlockMagnet magnet){
 		magnets.remove(magnet);
 		magnet.setStructure(null);
+		plugin.save();
 	}
-	
+
 	/**
 	 * @return the blocks
 	 */
@@ -96,13 +101,15 @@ public class MagnetBlockStructure {
 			return;
 		}
 		BlockPosition vector = position.substract(origin);
-		realMove(vector.multiply(1, 0, 0));
-		realMove(vector.multiply(0, 1, 0));
-		realMove(vector.multiply(0, 0, 1));
-		/*
+
+		Vector realMoved = new Vector(0,0,0);
+		realMoved.add(realMove(vector.multiply(1, 0, 0)));
+		realMoved.add(realMove(vector.multiply(0, 1, 0)));
+		realMoved.add(realMove(vector.multiply(0, 0, 1)));
+
 		for(Player player:getPassengers()){
 			Vector oldpos = player.getLocation().toVector();
-			Vector newpos = vector.toLocation().toVector().add(oldpos);
+			Vector newpos = realMoved.add(oldpos);
 			float yaw, pitch;
 			yaw = player.getLocation().getYaw();
 			pitch = player.getLocation().getPitch();
@@ -111,30 +118,28 @@ public class MagnetBlockStructure {
 			newloc.setPitch(pitch);
 			player.teleportTo(newloc);
 		}
-		*/
-
-		origin = position;
+		
 		plugin.save();
 	}
-	
-	private void realMove(BlockPosition vector){
+
+	private Vector realMove(BlockPosition vector){
 		if(vector.equals(new BlockPosition(vector.getWorld(), 0,0,0))){
-			return;
+			return new Vector(0,0,0);
 		}
 		for(MagnetBlockBlock block: blocks){
 			if(!block.testMove(block.getPosition().add(vector))){
-				return;
+				return new Vector(0,0,0);
 			}
 		}
-
-		for(MagnetBlockBlock block: blocks){
-			block.moveTo(block.getPosition().add(vector), 0);
+		for(int i = 0;i<=2;i++){
+			for(MagnetBlockBlock block: blocks){
+				block.moveTo(block.getPosition().add(vector), i);
+			}
 		}
-		for(MagnetBlockBlock block: blocks){
-			block.moveTo(block.getPosition().add(vector), 1);
-		}
+		origin = origin.add(vector);
+		return vector.toLocation().toVector();
 	}
-	
+
 	public void rotate(BlockPosition origin){
 		//Test rotation
 		for(MagnetBlockBlock block:blocks)
@@ -145,47 +150,46 @@ public class MagnetBlockStructure {
 				return;
 			}
 		}
-		for(MagnetBlockBlock block:blocks)
-		{
-			BlockPosition pos = block.getPosition();
-			BlockPosition diff = pos.substract(origin);
-			block.moveTo(diff.rotated().add(origin), 0);
-		}
-		for(MagnetBlockBlock block:blocks)
-		{
-			BlockPosition pos = block.getPosition();
-			BlockPosition diff = pos.substract(origin);
-			block.moveTo(diff.rotated().add(origin), 1);
+		for(int i = 0;i<=2;i++){
+			for(MagnetBlockBlock block:blocks)
+			{
+				BlockPosition pos = block.getPosition();
+				BlockPosition diff = pos.substract(origin);
+				block.moveTo(diff.rotated().add(origin), i);
+			}
 		}
 		plugin.save();
 	}
-	
+
 	public List<Player> getPassengers(){
 		List<Player> result = new ArrayList<Player>();
 		for(LivingEntity entity:origin.getWorld().getLivingEntities()){
 			if(entity instanceof Player){
 				Player player = (Player)entity;
-				Vector plvec = player.getLocation().toVector();
-				Vector orvec = origin.toLocation().toVector();
-				if(plvec.isInSphere(orvec, 5)){
-					result.add(player);
+				BlockPosition pl = new BlockPosition(player.getLocation());
+				for(MagnetBlockBlock block: blocks){
+					BlockPosition bp = new BlockPosition(block.getBlock().getFace(BlockFace.UP));
+					if(pl.equals(bp)){
+						result.add(player);
+					}
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	public void endAnimation(){
 		if(animation!=null)
 		{
 			plugin.getServer().getScheduler().cancelTask(animationId);
 			animation = null;
+			plugin.log.log(Level.INFO,"Animation finished");
 		}
 	}
-	
+
 	public void setTarget(BlockPosition pos){
 		endAnimation();
 		animation = new StructureAnimation(this, pos);
-		animationId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, animation, 0, 10);
+		animationId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, animation, 0, 5);
 	}
 }
