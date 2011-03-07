@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 
 public class MagnetBlockBlock {
 	private Block block;
@@ -101,11 +103,17 @@ public class MagnetBlockBlock {
 			break;
 		case 1:
 			block.setType(Material.AIR);
+			if(block.getFace(BlockFace.DOWN).getType().equals(Material.WOOD_PLATE)){
+				block.getFace(BlockFace.DOWN).setData((byte) 0);
+			}
 			break;
 		case 2:
 			block = pos.getWorld().getBlockAt(pos.toLocation());
 			block.setType(material);
 			block.setData(data);
+			if(block.getFace(BlockFace.DOWN).getType().equals(Material.WOOD_PLATE)){
+				block.getFace(BlockFace.DOWN).setData((byte) 1);
+			}
 			break;
 		}
 	}
@@ -119,5 +127,31 @@ public class MagnetBlockBlock {
 			return block.getData()>0;
 		}
 		return false;
+	}
+	
+	public boolean isSolidBlock(){
+		Material t = getBlock().getType();
+		if(t.equals(Material.BED_BLOCK)||
+				t.equals(Material.IRON_DOOR_BLOCK)||
+				t.equals(Material.WOOD_DOOR)||
+				t.equals(Material.WOOD_PLATE)||
+				t.equals(Material.STONE_PLATE)||
+				t.equals(Material.TORCH)||
+				t.equals(Material.REDSTONE_WIRE)||
+				t.equals(Material.REDSTONE_TORCH_OFF)||
+				t.equals(Material.REDSTONE_TORCH_ON)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.YELLOW_FLOWER)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.RED_ROSE)
+				){
+			return false;
+		}
+		return true;
 	}
 }

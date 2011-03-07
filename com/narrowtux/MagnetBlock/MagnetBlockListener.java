@@ -61,7 +61,6 @@ public class MagnetBlockListener extends BlockListener {
 			}
 		}
 		if(block.getStructure()!=null){
-			event.getPlayer().sendMessage("Hello!");
 			event.setCancelled(true);
 		}
 	}
@@ -82,6 +81,7 @@ public class MagnetBlockListener extends BlockListener {
 			Vector block1 = event.getBlock().getLocation().toVector();
 			block1.add(new Vector(0.5,0.5,0.5));
 			Vector player = pl.getLocation().toVector();
+			player.add(new Vector(0,1,0));
 			Vector move = block1.subtract(player);
 			move = move.normalize();
 			if(event.getPlayer().getItemInHand().getType().equals(Material.BONE)){
@@ -127,6 +127,7 @@ public class MagnetBlockListener extends BlockListener {
 			Vector block1 = event.getBlock().getLocation().toVector();
 			block1.add(new Vector(0.5,0.5,0.5));
 			Vector player = pl.getLocation().toVector();
+			player.add(new Vector(0,1,0));
 			Vector move = block1.subtract(player);
 			move = move.normalize();
 

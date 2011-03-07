@@ -30,6 +30,7 @@ public class MagnetBlock extends JavaPlugin {
 	public Logger log = null;
 	private HashMap<String, MagnetBlockStructure> structures = new HashMap<String, MagnetBlockStructure>();
 	private MagnetBlockListener blockListener = new MagnetBlockListener();
+	private MagnetPlayerListener playerListener = new MagnetPlayerListener();
 	public MagnetBlock(){
 		MagnetBlockPlayer.plugin = this;
 		MagnetBlockStructure.plugin = this;
@@ -53,6 +54,7 @@ public class MagnetBlock extends JavaPlugin {
 		pm.registerEvent(Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
 		pm.registerEvent(Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Normal, this);
 		pm.registerEvent(Type.REDSTONE_CHANGE, blockListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 		PluginDescriptionFile pdf = getDescription();
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been enabled.");
 	}
