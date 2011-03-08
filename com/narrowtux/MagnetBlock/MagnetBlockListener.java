@@ -67,7 +67,7 @@ public class MagnetBlockListener extends BlockListener {
 
 	@Override 
 	public void onBlockDamage(BlockDamageEvent event){
-		// TODO: Check if the block gets destroyed by tnt or a creeper.
+		// TODO: Check if the block gets destroyed by tnt or a creeper. or even other plugins
 
 		if(event.getDamageLevel().getLevel()!=0){
 			//return;

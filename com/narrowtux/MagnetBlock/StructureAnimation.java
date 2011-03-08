@@ -9,11 +9,19 @@ public class StructureAnimation implements Runnable {
 	private BlockPosition targetPosition;
 	private BlockPosition lastPosition;
 	private int stucks = 0;
+	private boolean useLogistic = false;
+	private int neededsteps = 0;
+	private int steps = 0;
 	public StructureAnimation(MagnetBlockStructure structure, BlockPosition targetPos){
 		this.structure = structure;
 		targetPosition = targetPos;
 		toPos = targetPos.toLocation().toVector();
 		currentPos = structure.getOrigin().toLocation().toVector();
+		Vector v = toPos.clone().subtract(currentPos).normalize();
+		v.setX(Math.round(v.getX()));
+		v.setY(Math.round(v.getY()));
+		v.setZ(Math.round(v.getZ()));
+		neededsteps = (int) (toPos.clone().subtract(currentPos.clone()).length()/v.length());
 	}
 	@Override
 	public void run() {
