@@ -130,7 +130,7 @@ public class MagnetBlockStructure {
 			player.teleportTo(newloc);
 		}
 
-		plugin.save();
+		//plugin.save();
 	}
 
 	private Vector realMove(BlockPosition vector){

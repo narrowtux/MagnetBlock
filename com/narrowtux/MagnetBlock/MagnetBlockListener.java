@@ -149,7 +149,7 @@ public class MagnetBlockListener extends BlockListener {
 		if(event.getNewCurrent()==0)
 			return;
 		Block b = event.getBlock();
-		BlockFace[] faces = {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST};
+		BlockFace[] faces = {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST, BlockFace.DOWN, BlockFace.UP};
 		for(BlockFace face: faces){
 			Block bf = b.getFace(face);
 			if(bf.getType().equals(Material.IRON_BLOCK)){

@@ -39,7 +39,7 @@ public class MagnetBlock extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-
+		save();
 		PluginDescriptionFile pdf = getDescription();
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been disabled.");
 	}
@@ -196,6 +196,10 @@ public class MagnetBlock extends JavaPlugin {
 				sender.sendMessage(ChatColor.GREEN+"Touch your magnet now.");
 				return true;
 			}
+		} else if(cmd.getName().equals("magnetblocksave")){
+			save();
+			sender.sendMessage("All structures saved.");
+			return true;
 		}
 		return false;
 	}
