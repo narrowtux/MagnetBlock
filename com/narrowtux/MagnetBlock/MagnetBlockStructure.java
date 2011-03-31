@@ -2,7 +2,6 @@ package com.narrowtux.MagnetBlock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -50,6 +50,9 @@ public class MagnetBlockStructure {
 
 	public void addBlock(MagnetBlockBlock block)
 	{
+		if(blocks.contains(block)){
+			return;
+		}
 		blocks.add(block);
 		if(origin == null){
 			origin = new BlockPosition(block);
@@ -112,13 +115,13 @@ public class MagnetBlockStructure {
 			return;
 		}
 		BlockPosition vector = position.substract(origin);
-		List<Player> passengers = getPassengers();
+		List<Entity> passengers = getPassengers();
 		Vector realMoved = new Vector(0,0,0);
 		realMoved.add(realMove(vector.multiply(1, 0, 0)));
 		realMoved.add(realMove(vector.multiply(0, 1, 0)));
 		realMoved.add(realMove(vector.multiply(0, 0, 1)));
 
-		for(Player player:passengers){
+		for(Entity player:passengers){
 			Vector oldpos = player.getLocation().toVector();
 			Vector newpos = realMoved.clone().add(oldpos);
 			float yaw, pitch;
@@ -127,10 +130,8 @@ public class MagnetBlockStructure {
 			Location newloc = newpos.toLocation(player.getWorld());
 			newloc.setYaw(yaw);
 			newloc.setPitch(pitch);
-			player.teleportTo(newloc);
+			player.teleport(newloc);
 		}
-
-		//plugin.save();
 	}
 
 	private Vector realMove(BlockPosition vector){
@@ -142,10 +143,23 @@ public class MagnetBlockStructure {
 				return new Vector(0,0,0);
 			}
 		}
+		for(MagnetBlockBlock block: blocks){
+			block.moveTo(block.getPosition().add(vector), 0);
+		}
+		for(MagnetBlockBlock block: nonsolidBlocks){
+			block.moveTo(block.getPosition().add(vector), 1);
+		}
+		for(MagnetBlockBlock block: solidBlocks){
+			block.moveTo(block.getPosition().add(vector), 1);
+		}
+		for(MagnetBlockBlock block: solidBlocks){
+			block.moveTo(block.getPosition().add(vector), 2);
+		}
+		for(MagnetBlockBlock block: nonsolidBlocks){
+			block.moveTo(block.getPosition().add(vector), 2);
+		}
 		for(int i = 0;i<=2;i++){
-			for(MagnetBlockBlock block: blocks){
-				block.moveTo(block.getPosition().add(vector), i);
-			}
+			
 		}
 		origin = origin.add(vector);
 		return vector.toLocation().toVector();
@@ -172,33 +186,43 @@ public class MagnetBlockStructure {
 		plugin.save();
 	}
 
-	public List<Player> getPassengers(){
-		List<Player> result = new ArrayList<Player>();
-		for(LivingEntity entity:origin.getWorld().getLivingEntities()){
-			if(entity instanceof Player){
-				Player player = (Player)entity;
-				BlockPosition pl = new BlockPosition(player.getLocation());
-				Block b = pl.getWorld().getBlockAt(pl.toLocation());
-				Block down = b.getFace(BlockFace.DOWN);
-				BlockPosition dp = new BlockPosition(down);
-				MagnetBlockBlock dm = MagnetBlockBlock.getBlock(dp);
-				MagnetBlockBlock mb = MagnetBlockBlock.getBlock(pl);
-				if(dm.getStructure()!=null){
-					if(dm.getStructure().equals(this))
-					{
-						result.add(player);
-						System.out.println("Player is above block");
-						continue;
+	public List<Entity> getPassengers(){
+		List<Entity> result = new ArrayList<Entity>();
+		for(Entity entity:origin.getWorld().getEntities()){
+			try{
+				if(entity instanceof LivingEntity || entity instanceof Minecart){
+					if(entity instanceof Player){
+					Player player = (Player)entity;
+						MagnetBlockPlayer mplayer = MagnetBlockPlayer.getPlayerByName(player.getName());
+						if(mplayer.getFollowing()!=null){
+							continue;
+						}
+					}
+					BlockPosition pl = new BlockPosition(entity.getLocation());
+					Block b = pl.getWorld().getBlockAt(pl.toLocation());
+					Block down = b.getFace(BlockFace.DOWN);
+					BlockPosition dp = new BlockPosition(down);
+					MagnetBlockBlock dm = MagnetBlockBlock.getBlock(dp);
+					MagnetBlockBlock mb = MagnetBlockBlock.getBlock(pl);
+					if(dm.getStructure()!=null){
+						if(dm.getStructure().equals(this))
+						{
+							result.add(entity);
+							//System.out.println("Player is above block");
+							continue;
+						}
+					}
+					if(mb.getStructure()!=null){
+						if(mb.getStructure().equals(this))
+						{
+							result.add(entity);
+							//System.out.println("Player is in block");
+							continue;
+						}
 					}
 				}
-				if(mb.getStructure()!=null){
-					if(mb.getStructure().equals(this))
-					{
-						result.add(player);
-						System.out.println("Player is in block");
-						continue;
-					}
-				}
+			} catch(NullPointerException e){
+				
 			}
 		}
 		return result;
@@ -209,7 +233,7 @@ public class MagnetBlockStructure {
 		{
 			plugin.getServer().getScheduler().cancelTask(animationId);
 			animation = null;
-			plugin.log.log(Level.INFO,"Animation finished");
+			//plugin.log.log(Level.INFO,"Animation finished");
 		}
 	}
 

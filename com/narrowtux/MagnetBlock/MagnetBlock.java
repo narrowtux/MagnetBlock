@@ -31,10 +31,14 @@ public class MagnetBlock extends JavaPlugin {
 	private HashMap<String, MagnetBlockStructure> structures = new HashMap<String, MagnetBlockStructure>();
 	private MagnetBlockListener blockListener = new MagnetBlockListener();
 	private MagnetPlayerListener playerListener = new MagnetPlayerListener();
+
+	public static Permission permissions;
+	
 	public MagnetBlock(){
 		MagnetBlockPlayer.plugin = this;
 		MagnetBlockStructure.plugin = this;
 		MagnetBlockBlock.plugin = this;
+		MagnetPlayerListener.plugin = this;
 	}
 
 	@Override
@@ -46,15 +50,15 @@ public class MagnetBlock extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		permissions = new Permission(getDataFolder());
 		log = getServer().getLogger();
 		load();
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PLACE, blockListener, Priority.Normal, this);
 		pm.registerEvent(Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.REDSTONE_CHANGE, blockListener, Priority.Normal, this);
-		pm.registerEvent(Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
+		//pm.registerEvent(Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 		PluginDescriptionFile pdf = getDescription();
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been enabled.");
 	}
@@ -66,6 +70,10 @@ public class MagnetBlock extends JavaPlugin {
 		}
 		if(player==null){
 			sender.sendMessage(ChatColor.RED.toString()+"You can use "+cmd.getName()+" ingame.");
+			return false;
+		}
+		if(!player.hasRight()){
+			player.getPlayer().sendMessage("You aren't allowed to do this.");
 			return false;
 		}
 		/*
@@ -200,6 +208,35 @@ public class MagnetBlock extends JavaPlugin {
 			save();
 			sender.sendMessage("All structures saved.");
 			return true;
+		} else if(cmd.getName().equals("magnetblockcomehere")){
+			if(args.length == 1){
+				String name1 = args[0];
+				if(structures.containsKey(name1)){
+					MagnetBlockStructure struct = structures.get(name1);
+					BlockPosition pos = new BlockPosition(player.getPlayer().getLocation());
+					struct.setTarget(pos);
+					sender.sendMessage("Structure will come to you if possible.");
+				} else {
+					sender.sendMessage("No structure with name "+name1+" found.");
+				}
+				return true;
+			}
+		} else if(cmd.getName().equals("magnetblockfollowme")){
+			if(args.length == 0){
+				player.setFollowing(null);
+				sender.sendMessage("Structure won't follow you any more.");
+				return true;
+			} else {
+				String name1 = args[0];
+				if(structures.containsKey(name1)){
+					MagnetBlockStructure struct = structures.get(name1);
+					player.setFollowing(struct);
+					sender.sendMessage("Structure will follow to you if possible.");
+				} else {
+					sender.sendMessage("No structure with name "+name1+" found.");
+				}
+				return true;
+			}
 		}
 		return false;
 	}
@@ -490,6 +527,8 @@ public class MagnetBlock extends JavaPlugin {
 						b.setType(m);
 						b.setData(data);
 						MagnetBlockBlock block = MagnetBlockBlock.getBlock(new BlockPosition(b));
+						block.setMaterial(m);
+						block.setData(data);
 						structure.addBlock(block);
 					} else {
 						continue;

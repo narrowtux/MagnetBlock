@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
+import org.bukkit.block.Sign;
 
 public class MagnetBlockBlock {
 	private Block block;
@@ -16,6 +16,23 @@ public class MagnetBlockBlock {
 	static MagnetBlock plugin = null;
 	private MagnetBlockStructure structure = null;
 	private Material material;
+	private List<String> signText = new ArrayList<String>();
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public byte getData() {
+		return data;
+	}
+
+	public void setData(byte data) {
+		this.data = data;
+	}
+
 	private byte data;
 	protected MagnetBlockBlock(Block block)
 	{
@@ -27,6 +44,8 @@ public class MagnetBlockBlock {
 	 */
 	public void setBlock(Block block) {
 		this.block = block;
+		material = block.getType();
+		data = block.getData();
 	}
 
 	/**
@@ -87,9 +106,9 @@ public class MagnetBlockBlock {
 				if(mblock.getStructure()!=null&&mblock.getStructure().equals(structure)){
 					return true;
 				} else {
-					plugin.log.log(Level.INFO, "Block collides with"+structure);
+					//plugin.log.log(Level.INFO, "Block collides with"+structure);
 				}
-				plugin.log.log(Level.INFO, "Block collides with other block ("+block.getType().toString()+").");
+				//plugin.log.log(Level.INFO, "Block collides with other block ("+block.getType().toString()+").");
 				return false;
 			}
 		}
@@ -101,6 +120,23 @@ public class MagnetBlockBlock {
 		case 0:
 			material = block.getType();
 			data = block.getData();
+			if(material.equals(Material.AIR)){
+				plugin.log.log(Level.SEVERE, "Block has encountered AIR Type!");
+				block = block.getWorld().getBlockAt(block.getLocation());
+				material = Material.COBBLESTONE;
+				data = 0;
+				if(material.equals(Material.AIR)){
+					plugin.log.log(Level.SEVERE, "Block is really broken :(");
+				}
+			}
+			if(material.toString().contains("SIGN")){
+				Sign s = (Sign)block.getState();
+				for(int i = 0; i<s.getLines().length;i++)
+				{
+					signText.add(s.getLine(i));
+				}
+				
+			}
 			break;
 		case 1:
 			block.setType(Material.AIR);
@@ -112,8 +148,14 @@ public class MagnetBlockBlock {
 			block = pos.getWorld().getBlockAt(pos.toLocation());
 			block.setType(material);
 			block.setData(data);
-			if(block.getFace(BlockFace.DOWN).getType().equals(Material.WOOD_PLATE)){
-				block.getFace(BlockFace.DOWN).setData((byte) 1);
+			if(material.toString().contains("SIGN")){
+				Sign s = (Sign)block.getState();
+				int i = 0;
+				for(String line: signText){
+					s.setLine(i, line);
+					i++;
+				}
+				signText.clear();
 			}
 			break;
 		}
@@ -124,7 +166,6 @@ public class MagnetBlockBlock {
 			return true;
 		}
 		if(block.getType().equals(Material.STATIONARY_WATER)||block.getType().equals(Material.STATIONARY_LAVA)){
-			System.out.println("water level:"+block.getData());
 			return block.getData()>0;
 		}
 		return false;
@@ -143,12 +184,22 @@ public class MagnetBlockBlock {
 				t.equals(Material.REDSTONE_TORCH_ON)||
 				t.equals(Material.RED_MUSHROOM)||
 				t.equals(Material.YELLOW_FLOWER)||
-				t.equals(Material.RED_MUSHROOM)||
-				t.equals(Material.RED_MUSHROOM)||
-				t.equals(Material.RED_MUSHROOM)||
-				t.equals(Material.RED_MUSHROOM)||
-				t.equals(Material.RED_MUSHROOM)||
-				t.equals(Material.RED_MUSHROOM)||
+				t.equals(Material.LADDER)||
+				t.equals(Material.SIGN)||
+				t.equals(Material.WALL_SIGN)||
+				t.equals(Material.SIGN_POST)||
+				t.equals(Material.LEVER)||
+				t.equals(Material.BROWN_MUSHROOM)||
+				t.equals(Material.CACTUS)||
+				t.equals(Material.CROPS)||
+				t.equals(Material.DIODE_BLOCK_OFF)||
+				t.equals(Material.DIODE_BLOCK_ON)||
+				t.equals(Material.PORTAL)||
+				t.equals(Material.RAILS)||
+				t.equals(Material.SAPLING)||
+				t.equals(Material.SNOW)||
+				t.equals(Material.SUGAR_CANE_BLOCK)||
+				t.equals(Material.WALL_SIGN)||
 				t.equals(Material.RED_ROSE)
 				){
 			return false;

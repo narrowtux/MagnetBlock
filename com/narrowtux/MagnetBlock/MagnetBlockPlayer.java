@@ -3,6 +3,7 @@ package com.narrowtux.MagnetBlock;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
+import com.narrowtux.MagnetBlock.RequestType;
 
 public class MagnetBlockPlayer {
 	private Player player = null;
@@ -10,6 +11,7 @@ public class MagnetBlockPlayer {
 	public static MagnetBlock plugin = null;
 	private RequestType requestType = RequestType.None;
 	private MagnetBlockStructure editing = null;
+	private MagnetBlockStructure following = null;
 
 	public Player getPlayer() {
 		return player;
@@ -58,11 +60,30 @@ public class MagnetBlockPlayer {
 		}
 	}
 
-	/**
+	/**s
 	 * @return the editing
 	 */
 	public MagnetBlockStructure getEditing() {
 		return editing;
+	}
+	
+	@SuppressWarnings("static-access")
+	public boolean hasRight(){
+		return plugin.permissions.hasRight(player.getName());
+	}
+
+	/**
+	 * @param following the following to set
+	 */
+	public void setFollowing(MagnetBlockStructure following) {
+		this.following = following;
+	}
+
+	/**
+	 * @return the following
+	 */
+	public MagnetBlockStructure getFollowing() {
+		return following;
 	}
 	
 }

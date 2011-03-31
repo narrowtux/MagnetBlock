@@ -6,4 +6,5 @@ public enum RequestType {
 	None,
 	EditStructure,
 	RemoveMagnet,
+	Follow,
 }

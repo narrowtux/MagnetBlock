@@ -9,8 +9,11 @@ public class StructureAnimation implements Runnable {
 	private BlockPosition targetPosition;
 	private BlockPosition lastPosition;
 	private int stucks = 0;
+	@SuppressWarnings("unused")
 	private boolean useLogistic = false;
+	@SuppressWarnings("unused")
 	private int neededsteps = 0;
+	@SuppressWarnings("unused")
 	private int steps = 0;
 	public StructureAnimation(MagnetBlockStructure structure, BlockPosition targetPos){
 		this.structure = structure;
@@ -43,7 +46,7 @@ public class StructureAnimation implements Runnable {
 		} else {
 			stucks = 0;
 		}
-		System.out.println(v);
+		//System.out.println(v);
 		if(targetPosition.equals(structure.getOrigin())||stucks==3){
 			structure.endAnimation();
 			return;
