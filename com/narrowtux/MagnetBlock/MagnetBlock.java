@@ -40,6 +40,7 @@ public class MagnetBlock extends JavaPlugin {
 		MagnetBlockStructure.plugin = this;
 		MagnetBlockBlock.plugin = this;
 		MagnetPlayerListener.plugin = this;
+		MagnetBlockMagnet.plugin = this;
 	}
 
 	@Override

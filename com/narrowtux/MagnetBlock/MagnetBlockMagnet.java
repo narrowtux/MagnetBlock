@@ -10,7 +10,7 @@ public class MagnetBlockMagnet{
 	private boolean powered;
 	private Block block;
 	static List<MagnetBlockMagnet> instances = new ArrayList<MagnetBlockMagnet>();
-	static MagnetBlock plugin = null;
+	static public MagnetBlock plugin = null;
 	private MagnetBlockStructure structure = null;
 	private MagnetBlockMagnet(Block block) {
 		this.setBlock(block);
