@@ -14,7 +14,7 @@ public class MagnetBlockMagnet{
 	private MagnetBlockStructure structure = null;
 	private MagnetBlockMagnet(Block block) {
 		this.setBlock(block);
-		block.setType(Material.IRON_BLOCK);
+		block.setType(plugin.config.getMagnetBlockType());
 	}
 	/**
 	 * @param powered the powered to set

@@ -10,8 +10,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
 public class MagnetBlockListener extends BlockListener {
-	public MagnetBlockListener(){
-
+	public static MagnetBlock plugin;
+	public MagnetBlockListener(MagnetBlock instance){
+		plugin=instance;
 	}
 	@Override
 	public void onBlockPlace(BlockPlaceEvent event)
@@ -28,7 +29,7 @@ public class MagnetBlockListener extends BlockListener {
 				if(player.getRequestType().equals(RequestType.EditStructure)){
 					structure.addBlock(MagnetBlockBlock.getBlock(new BlockPosition(event.getBlock())));
 					player.getPlayer().sendMessage(ChatColor.GREEN.toString()+event.getBlock().getType().toString()+" added to Structure.");
-				} else if(player.getRequestType().equals(RequestType.AddMagnet)&&event.getBlock().getType().equals(Material.IRON_BLOCK)){
+				} else if(player.getRequestType().equals(RequestType.AddMagnet)&&event.getBlock().getType().equals(plugin.config.getMagnetBlockType())){
 					structure.addMagnet(MagnetBlockMagnet.getBlock(new BlockPosition(event.getBlock())));
 					player.getPlayer().sendMessage(ChatColor.GREEN+"Magnet added.");
 					player.setRequestType(RequestType.None);
@@ -73,7 +74,7 @@ public class MagnetBlockListener extends BlockListener {
 		BlockFace[] faces = {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST, BlockFace.DOWN, BlockFace.UP};
 		for(BlockFace face: faces){
 			Block bf = b.getFace(face);
-			if(bf.getType().equals(Material.IRON_BLOCK)){
+			if(bf.getType().equals(plugin.config.getMagnetBlockType())){
 				if(MagnetBlockMagnet.exists(new BlockPosition(bf))){
 					MagnetBlockMagnet block = MagnetBlockMagnet.getBlock(new BlockPosition(bf));
 					block.getStructure().setTarget(new BlockPosition(bf));

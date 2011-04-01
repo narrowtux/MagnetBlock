@@ -45,13 +45,7 @@ public class MagnetPlayerListener extends PlayerListener {
 				Vector move = block1.subtract(player);
 				move = move.normalize();
 
-				if(event.getPlayer().getItemInHand().getType().equals(Material.FEATHER)){
-					move.multiply(new Vector(1,0,1));
-				} else if(event.getPlayer().getItemInHand().getType().equals(Material.STICK)){
-					move.multiply(new Vector(0,1,0));
-				} else {
-					move.multiply(new Vector(0,0,0));
-				}
+				move.multiply(plugin.config.getVector(event.getMaterial()));
 				move.multiply(direction);
 				BlockPosition vec = new BlockPosition(w, (int)Math.round(move.getX()),(int)Math.round(move.getY()),(int)Math.round(move.getZ()));
 				structure.moveBy(vec);

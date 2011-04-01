@@ -29,8 +29,9 @@ import org.bukkit.World.Environment;
 public class MagnetBlock extends JavaPlugin {
 	public Logger log = null;
 	private HashMap<String, MagnetBlockStructure> structures = new HashMap<String, MagnetBlockStructure>();
-	private MagnetBlockListener blockListener = new MagnetBlockListener();
+	private MagnetBlockListener blockListener = new MagnetBlockListener(this);
 	private MagnetPlayerListener playerListener = new MagnetPlayerListener();
+	public Configuration config;
 
 	public static Permission permissions;
 	
@@ -50,6 +51,7 @@ public class MagnetBlock extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		config = new Configuration(new File(getDataFolder().getAbsolutePath()+"/magnetblock.cfg"));
 		permissions = new Permission(getDataFolder());
 		log = getServer().getLogger();
 		load();

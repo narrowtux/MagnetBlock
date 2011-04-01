@@ -57,7 +57,7 @@ public class MagnetBlockStructure {
 		if(origin == null){
 			origin = new BlockPosition(block);
 		}
-		if(block.getBlock().getType().equals(Material.IRON_BLOCK)&&!ironset){
+		if(block.getBlock().getType().equals(plugin.config.getMagnetBlockType())&&!ironset){
 			origin = new BlockPosition(block);
 			ironset = true;
 		}
