@@ -44,6 +44,36 @@ public class Configuration {
 								}
 							}
 							
+							if(key.equalsIgnoreCase("item")){
+								try{
+									String values[] = value.split(",");
+									if(values.length==4){
+										Material item;
+										try{
+											item = Material.valueOf(values[0]);
+										} catch(Exception e){
+											throw new Exception("Material not found. Be sure to refer to the Material-ENUM-Documentation.");
+										}
+										Integer x, y, z;
+										try{
+											x = Integer.valueOf(values[1]);
+											y = Integer.valueOf(values[2]);
+											z = Integer.valueOf(values[3]);
+										} catch(Exception e){
+											throw new Exception("Could not parse coordinates. They have to be integers.");
+										}
+										BlockVector vector = new BlockVector(x,y,z);
+										items.put(item, vector);
+									} else {
+										throw new Exception("Not enough arguments (material,x,y,z)");
+									}
+								} catch (Exception e){
+									System.out.println("Error on loading line:");
+									System.out.println(key+"="+value+" :");
+									System.out.println(e.getCause());
+									System.out.println("----------------------");
+								}
+							}
 						}
 					}
 				}
@@ -54,6 +84,18 @@ public class Configuration {
 			}
 		} else {
 			System.out.println("No MagnetBlock configuration file found. For configuration, create one in %bukkitdir%/plugins/MagnetBlock/magnetblock.cfg and refer to the forum post.");
+		}
+	}
+
+	public Material getMagnetBlockType() {
+		return magnetBlockType;
+	}
+	
+	public BlockVector getVector(Material item){
+		if(items.containsKey(item)){
+			return items.get(item);
+		} else {
+			return new BlockVector(0,0,0);
 		}
 	}
 }
