@@ -18,6 +18,7 @@ public class Configuration {
 	public Configuration(File file){
 		this.file = file;
 		load();
+		initItems();
 	}
 	
 	private void load(){
@@ -27,6 +28,7 @@ public class Configuration {
 				input = new FileInputStream(file.getAbsoluteFile());
 				InputStreamReader ir = new InputStreamReader(input);
 				BufferedReader r = new BufferedReader(ir);
+				items.clear();
 				while(true){
 					String line = r.readLine();
 					if(line==null)
@@ -40,6 +42,7 @@ public class Configuration {
 								try{
 									magnetBlockType = Material.valueOf(value);
 								} catch(Exception e){
+									printErrorMessage(key, value, e, "MagnetBlock");
 									magnetBlockType = Material.IRON_BLOCK;
 								}
 							}
@@ -68,14 +71,14 @@ public class Configuration {
 										throw new Exception("Not enough arguments (material,x,y,z)");
 									}
 								} catch (Exception e){
-									System.out.println("Error on loading line:");
-									System.out.println(key+"="+value+" :");
-									System.out.println(e.getCause());
-									System.out.println("----------------------");
+									printErrorMessage(key, value, e, "MagnetBlock");
 								}
 							}
 						}
 					}
+				}
+				if(items.size()==0){
+					initItems();
 				}
 				r.close();
 				
@@ -97,5 +100,18 @@ public class Configuration {
 		} else {
 			return new BlockVector(0,0,0);
 		}
+	}
+	
+	public void printErrorMessage(String key, String value, Exception e, String pluginname){
+		pluginname = "["+pluginname+"]";
+		System.out.println(pluginname+"Error on loading line:");
+		System.out.println(pluginname+key+"="+value+" :");
+		System.out.println(pluginname+e.getCause());
+		System.out.println(pluginname+"----------------------");
+	}
+	
+	private void initItems(){
+		items.put(Material.FEATHER, new BlockVector(1,0,1));
+		items.put(Material.STICK, new BlockVector(0,1,0));
 	}
 }
