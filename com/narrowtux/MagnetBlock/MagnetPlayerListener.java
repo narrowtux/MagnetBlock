@@ -52,7 +52,7 @@ public class MagnetPlayerListener extends PlayerListener {
 			}
 		}
 		if(event.getAction()==Action.LEFT_CLICK_BLOCK){
-			
+
 			if(MagnetBlockMagnet.exists(pos)){
 				MagnetBlockPlayer player = MagnetBlockPlayer.getPlayerByName(event.getPlayer().getName());
 				if(player.getRequestType().equals(RequestType.RemoveMagnet)){

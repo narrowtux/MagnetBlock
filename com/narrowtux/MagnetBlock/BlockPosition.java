@@ -8,14 +8,14 @@ public class BlockPosition{
 	private int x, y, z;
 	private World world;
 
-	BlockPosition(World world, int x, int y, int z){
+	public BlockPosition(World world, int x, int y, int z){
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.world = world;
 	}
 	
-	BlockPosition(BlockPosition other)
+	public BlockPosition(BlockPosition other)
 	{
 		x = other.x;
 		y = other.y;
@@ -23,7 +23,7 @@ public class BlockPosition{
 		world = other.world;
 	}
 	
-	BlockPosition(MagnetBlockBlock magnetBlock)
+	public BlockPosition(MagnetBlockBlock magnetBlock)
 	{
 		Block block = magnetBlock.getBlock();
 		x = block.getX();
@@ -32,14 +32,14 @@ public class BlockPosition{
 		world = block.getWorld();
 	}
 	
-	BlockPosition(Block block){
+	public BlockPosition(Block block){
 		x = block.getX();
 		y = block.getY();
 		z = block.getZ();
 		world = block.getWorld();
 	}
 	
-	BlockPosition(Location loc)
+	public BlockPosition(Location loc)
 	{
 		x = loc.getBlockX();
 		y = loc.getBlockY();

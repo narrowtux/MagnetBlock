@@ -17,8 +17,8 @@ public class Configuration {
 	
 	public Configuration(File file){
 		this.file = file;
-		load();
 		initItems();
+		load();
 	}
 	
 	private void load(){

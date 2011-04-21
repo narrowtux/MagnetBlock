@@ -323,6 +323,9 @@ public class MagnetBlock extends JavaPlugin {
 				w.write("name:"+name+"\n");
 				BlockPosition pos = structure.getOrigin();
 				w.write("origin:"+pos.getX()+","+pos.getY()+","+pos.getZ()+"\n");
+				if(pos.getWorld()==null){
+					pos.setWorld(getServer().getWorlds().get(0));
+				}
 				w.write("world:"+pos.getWorld().getName()+","+pos.getWorld().getEnvironment().toString());
 				w.close();
 			} catch (IOException e) {
@@ -524,6 +527,9 @@ public class MagnetBlock extends JavaPlugin {
 						int y = Integer.valueOf(splt[1]);
 						int z = Integer.valueOf(splt[2]);
 						World w = pos.getWorld();
+						if(w==null){
+							w = getServer().getWorlds().get(0);
+						}
 						Block b = w.getBlockAt(x, y, z);
 						Material m = Material.valueOf(splt[3]);
 						byte data = Byte.valueOf(splt[4]);

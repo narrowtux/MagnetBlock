@@ -118,7 +118,7 @@ public class MagnetBlockBlock {
 	public void moveTo(BlockPosition pos, int step){
 		switch(step){
 		case 0:
-			material = block.getType();
+			material = Material.getMaterial(block.getWorld().getBlockTypeIdAt(block.getLocation()));
 			data = block.getData();
 			if(material.equals(Material.AIR)){
 				plugin.log.log(Level.SEVERE, "Block has encountered AIR Type!");
