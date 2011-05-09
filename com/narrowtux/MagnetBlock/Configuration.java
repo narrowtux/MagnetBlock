@@ -26,7 +26,7 @@ public class Configuration {
 	
 	private void load(){
 		magnetBlockType = reader.getMaterial("magnet", Material.IRON_BLOCK);
-		maximumSpeed = reader.getInteger("maximumSpeed", 1);
+		maximumSpeed = reader.getInteger("maximumspeed", 1);
 		for (String value: reader.values("item")){
 			try{
 				String values[] = value.split(",");

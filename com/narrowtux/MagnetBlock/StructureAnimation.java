@@ -15,6 +15,7 @@ public class StructureAnimation implements Runnable {
 	private int neededsteps = 0;
 	@SuppressWarnings("unused")
 	private int steps = 0;
+	private int currentSpeed = 0;
 	public StructureAnimation(MagnetBlockStructure structure, BlockPosition targetPos){
 		this.structure = structure;
 		targetPosition = targetPos;
@@ -29,24 +30,40 @@ public class StructureAnimation implements Runnable {
 	@Override
 	public void run() {
 		Vector v ;
-		v = toPos.clone().subtract(currentPos.clone()).normalize();
+		v = toPos.clone().subtract(currentPos.clone());
+		int distance = (int)v.length();
+		v = v.normalize();
 		v.setX(Math.round(v.getX()));
 		v.setY(Math.round(v.getY()));
 		v.setZ(Math.round(v.getZ()));
+		int maxSpeed = MagnetBlock.instance.config.getMaximumSpeed();
+		if(distance>maxSpeed){
+			if(currentSpeed<maxSpeed){
+				currentSpeed++;
+			}
+		} else {
+			if(currentSpeed>=distance){
+				currentSpeed/=2;
+			}
+		}
+		if(currentSpeed == 0){
+			currentSpeed = 1;
+		}
 		if(v.equals(new Vector(0,0,0))){
 			structure.endAnimation();
 			return;
 		}
+		v = v.multiply(currentSpeed);
 		currentPos = structure.getOrigin().toLocation().toVector();
 		currentPos = currentPos.add(v);
 		lastPosition = new BlockPosition(structure.getOrigin());
 		structure.moveTo(new BlockPosition(currentPos.toLocation(structure.getOrigin().getWorld())));
 		if(lastPosition.equals(structure.getOrigin())){
 			stucks++;
+			currentSpeed = 1;
 		} else {
 			stucks = 0;
 		}
-		//System.out.println(v);
 		if(targetPosition.equals(structure.getOrigin())||stucks==3){
 			structure.endAnimation();
 			return;

@@ -32,10 +32,12 @@ public class MagnetBlock extends JavaPlugin {
 	private MagnetBlockListener blockListener = new MagnetBlockListener(this);
 	private MagnetPlayerListener playerListener = new MagnetPlayerListener();
 	public Configuration config;
+	public static MagnetBlock instance;
 
 	public static Permission permissions;
 	
 	public MagnetBlock(){
+		instance = this;
 		MagnetBlockPlayer.plugin = this;
 		MagnetBlockStructure.plugin = this;
 		MagnetBlockBlock.plugin = this;
