@@ -353,7 +353,7 @@ public class MagnetBlock extends JavaPlugin {
 				BufferedWriter w = new BufferedWriter(new OutputStreamWriter(output));
 				for(MagnetBlockBlock block:structure.getBlocks()){
 					BlockPosition pos = block.getPosition();
-					Material material = block.getBlock().getType();
+					Material material = pos.getType();
 					byte data = block.getBlock().getData();
 					w.write(pos.getX()+","+pos.getY()+","+pos.getZ()+",");
 					w.write(material.toString()+",");
@@ -535,8 +535,10 @@ public class MagnetBlock extends JavaPlugin {
 						Block b = w.getBlockAt(x, y, z);
 						Material m = Material.valueOf(splt[3]);
 						byte data = Byte.valueOf(splt[4]);
-						b.setType(m);
-						b.setData(data);
+						if(config.getRestoreStructures()){
+							b.setType(m);
+							b.setData(data);
+						}
 						MagnetBlockBlock block = MagnetBlockBlock.getBlock(new BlockPosition(b));
 						block.setMaterial(m);
 						block.setData(data);

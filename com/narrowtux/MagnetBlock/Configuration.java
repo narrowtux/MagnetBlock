@@ -16,6 +16,7 @@ public class Configuration {
 	private File file;
 	private FlatFileReader reader;
 	private int maximumSpeed;
+	private boolean restoreStructures;
 	
 	public Configuration(File file){
 		this.file = file;
@@ -27,6 +28,7 @@ public class Configuration {
 	private void load(){
 		magnetBlockType = reader.getMaterial("magnet", Material.IRON_BLOCK);
 		maximumSpeed = reader.getInteger("maximumspeed", 1);
+		restoreStructures = reader.getBoolean("restoneOnStartup", false);
 		for (String value: reader.values("item")){
 			try{
 				String values[] = value.split(",");
@@ -86,5 +88,9 @@ public class Configuration {
 	private void initItems(){
 		items.put(Material.FEATHER, new BlockVector(1,0,1));
 		items.put(Material.STICK, new BlockVector(0,1,0));
+	}
+	
+	public boolean getRestoreStructures(){
+		return restoreStructures;
 	}
 }

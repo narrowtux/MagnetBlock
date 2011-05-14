@@ -16,7 +16,9 @@ public class MagnetBlockBlock {
 	static MagnetBlock plugin = null;
 	private MagnetBlockStructure structure = null;
 	private Material material;
+	private int typeid;
 	private List<String> signText = new ArrayList<String>();
+	private World world  = null;
 	public Material getMaterial() {
 		return material;
 	}
@@ -44,8 +46,7 @@ public class MagnetBlockBlock {
 	 */
 	public void setBlock(Block block) {
 		this.block = block;
-		material = block.getType();
-		data = block.getData();
+		this.world = block.getWorld();
 	}
 
 	/**
@@ -118,16 +119,14 @@ public class MagnetBlockBlock {
 	public void moveTo(BlockPosition pos, int step){
 		switch(step){
 		case 0:
-			material = Material.getMaterial(block.getWorld().getBlockTypeIdAt(block.getLocation()));
+			typeid = world.getBlockTypeIdAt(block.getLocation());
+			material = Material.getMaterial(typeid);
 			data = block.getData();
 			if(material.equals(Material.AIR)){
 				plugin.log.log(Level.SEVERE, "Block has encountered AIR Type!");
 				block = block.getWorld().getBlockAt(block.getLocation());
 				material = Material.COBBLESTONE;
 				data = 0;
-				if(material.equals(Material.AIR)){
-					plugin.log.log(Level.SEVERE, "Block is really broken :(");
-				}
 			}
 			if(material.toString().contains("SIGN")){
 				Sign s = (Sign)block.getState();
@@ -135,7 +134,6 @@ public class MagnetBlockBlock {
 				{
 					signText.add(s.getLine(i));
 				}
-				
 			}
 			break;
 		case 1:
@@ -146,7 +144,7 @@ public class MagnetBlockBlock {
 			break;
 		case 2:
 			block = pos.getWorld().getBlockAt(pos.toLocation());
-			block.setType(material);
+			block.setTypeId(typeid);
 			block.setData(data);
 			if(material.toString().contains("SIGN")){
 				Sign s = (Sign)block.getState();
