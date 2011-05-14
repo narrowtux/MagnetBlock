@@ -1,10 +1,6 @@
 package com.narrowtux.MagnetBlock;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import org.bukkit.Material;
@@ -13,6 +9,7 @@ import org.bukkit.util.BlockVector;
 public class Configuration {
 	private Material magnetBlockType = Material.IRON_BLOCK;
 	private HashMap<Material, BlockVector> items = new HashMap<Material, BlockVector>();
+	@SuppressWarnings("unused")
 	private File file;
 	private FlatFileReader reader;
 	private int maximumSpeed;
@@ -28,7 +25,7 @@ public class Configuration {
 	private void load(){
 		magnetBlockType = reader.getMaterial("magnet", Material.IRON_BLOCK);
 		maximumSpeed = reader.getInteger("maximumspeed", 1);
-		restoreStructures = reader.getBoolean("restoneOnStartup", false);
+		restoreStructures = reader.getBoolean("restoneonstartup", false);
 		for (String value: reader.values("item")){
 			try{
 				String values[] = value.split(",");

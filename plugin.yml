@@ -1,6 +1,6 @@
 name: MagnetBlock
 main: com.narrowtux.MagnetBlock.MagnetBlock
-version: 0.4.5
+version: 0.4.6
 author: narrowtux
 description: MagnetBlock can be used to create automatic animated doors, big driving trains or elevators, cars, flying carpets, UP-like Houses or any other weird idea you've got!
 commands:
