@@ -199,7 +199,7 @@ public class MagnetBlockStructure {
 					}
 					BlockPosition pl = new BlockPosition(entity.getLocation());
 					Block b = pl.getWorld().getBlockAt(pl.toLocation());
-					Block down = b.getFace(BlockFace.DOWN);
+					Block down = b.getRelative(BlockFace.DOWN);
 					BlockPosition dp = new BlockPosition(down);
 					MagnetBlockBlock dm = MagnetBlockBlock.getBlock(dp);
 					MagnetBlockBlock mb = MagnetBlockBlock.getBlock(pl);

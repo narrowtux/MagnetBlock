@@ -138,8 +138,8 @@ public class MagnetBlockBlock {
 			break;
 		case 1:
 			block.setType(Material.AIR);
-			if(block.getFace(BlockFace.DOWN).getType().equals(Material.WOOD_PLATE)){
-				block.getFace(BlockFace.DOWN).setData((byte) 0);
+			if(block.getRelative(BlockFace.DOWN).getType().equals(Material.WOOD_PLATE)){
+				block.getRelative(BlockFace.DOWN).setData((byte) 0);
 			}
 			break;
 		case 2:

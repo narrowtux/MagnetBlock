@@ -26,6 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
 public class MagnetBlock extends JavaPlugin {
 	public Logger log = null;
 	private HashMap<String, MagnetBlockStructure> structures = new HashMap<String, MagnetBlockStructure>();
@@ -493,7 +494,9 @@ public class MagnetBlock extends JavaPlugin {
 						if(key.equals("world")){
 							String [] values = value.split(",");
 							if(values.length==2){
-								World w = getServer().createWorld(values[0], Environment.valueOf(values[1]));
+								WorldCreator wc = new WorldCreator(values[0]);
+								wc.environment(Environment.valueOf(values[1]));
+								World w = getServer().createWorld(wc);
 								if(w!=null)
 								{
 									pos.setWorld(w);
