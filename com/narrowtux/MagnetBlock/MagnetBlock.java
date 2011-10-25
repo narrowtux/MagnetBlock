@@ -69,7 +69,7 @@ public class MagnetBlock extends JavaPlugin {
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been enabled.");
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args){
+	public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args) {
 		MagnetBlockPlayer player = null;
 		if(sender instanceof Player){
 			player = MagnetBlockPlayer.getPlayerByName(((Player)sender).getName());
@@ -130,6 +130,16 @@ public class MagnetBlock extends JavaPlugin {
 						m.setStructure(null);
 					}
 					structures.remove(args[0]);
+					
+					File dataFolder = getDataFolder(); 
+					File sdir = new File(dataFolder.getAbsolutePath()+"/"+args[0]+".structure");
+					File structureFile = new File(sdir.getAbsolutePath()+"/info.csv"); 
+					structureFile.delete();
+					File blocksFile = new File(sdir.getAbsolutePath()+"/blocks.csv"); 
+					blocksFile.delete();
+					File magnetsFile = new File(sdir.getAbsolutePath()+"/magnets.csv"); 
+					magnetsFile.delete();
+					sdir.delete(); 
 					sender.sendMessage(ChatColor.GREEN+"Structure deleted.");
 					save();
 					return true;
