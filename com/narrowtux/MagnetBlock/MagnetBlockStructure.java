@@ -23,6 +23,22 @@ public class MagnetBlockStructure {
 	private int animationId = 0;
 	private boolean ironset = false;
 	private List<MagnetBlockMagnet> magnets = new ArrayList<MagnetBlockMagnet>();
+	private String name;
+	
+	public MagnetBlockStructure(String sname)
+	{
+		name = sname;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public String toString()
+	{
+		return name;
+	}
 
 	public List<MagnetBlockMagnet> getMagnets() {
 		return magnets;
