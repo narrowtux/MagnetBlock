@@ -107,9 +107,9 @@ public class MagnetBlockBlock {
 				if(mblock.getStructure()!=null&&mblock.getStructure().equals(structure)){
 					return true;
 				} else {
-					plugin.log.log(Level.INFO, "Block collides with structure "+structure);
+				//	plugin.log.log(Level.INFO, "Block collides with structure "+structure);
 				}
-				plugin.log.log(Level.INFO, "Block collides with other block ("+block.getType().toString()+"@["+block.getX() + "; " + block.getY() + "; " + block.getZ() + "])");
+				//plugin.log.log(Level.INFO, "Block collides with other block ("+block.getType().toString()+"@["+block.getX() + "; " + block.getY() + "; " + block.getZ() + "])");
 					
 				return false;
 			}
