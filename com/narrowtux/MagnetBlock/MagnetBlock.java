@@ -172,7 +172,7 @@ public class MagnetBlock extends JavaPlugin {
 				player.getPlayer().sendMessage(ChatColor.RED+"You aren't editing any structures.");
 			}
 			return true;
-		} else if(cmd.getName().equals("checkstruct")){
+		} else if(cmd.getName().equals("checkstructure")){
 			/*******************
 			 * CHECK STRUCTURE *
 			 *******************/
