@@ -72,7 +72,7 @@ public class MagnetBlockListener extends BlockListener {
 		Block b = event.getBlock();
 		BlockFace[] faces = {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST, BlockFace.DOWN, BlockFace.UP};
 		for(BlockFace face: faces){
-			Block bf = b.getFace(face);
+			Block bf = b.getRelative(face);
 			if(bf.getType().equals(plugin.config.getMagnetBlockType())){
 				if(MagnetBlockMagnet.exists(new BlockPosition(bf))){
 					MagnetBlockMagnet block = MagnetBlockMagnet.getBlock(new BlockPosition(bf));

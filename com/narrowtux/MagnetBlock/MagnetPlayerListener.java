@@ -1,15 +1,15 @@
 package com.narrowtux.MagnetBlock;
 
-import org.bukkit.Material;
+//import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
+//import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
-import org.bukkit.inventory.ItemStack;
+//import org.bukkit.inventory.ItemStack;
 
 public class MagnetPlayerListener extends PlayerListener {
 	static public MagnetBlock plugin;
@@ -58,10 +58,10 @@ public class MagnetPlayerListener extends PlayerListener {
 				if(player.getRequestType().equals(RequestType.RemoveMagnet)){
 					MagnetBlockMagnet magnet = MagnetBlockMagnet.getBlock(pos);
 					MagnetBlockMagnet.removeMagnet(magnet);
-					Block b = magnet.getBlock();
-					Material type = b.getType();
-					b.setType(Material.AIR);
-					b.getWorld().dropItemNaturally(new BlockPosition(b).toLocation(), new ItemStack(type.getId()));
+					//Block b = magnet.getBlock();
+					//Material type = b.getType();
+					//b.setType(Material.AIR);
+					//b.getWorld().dropItemNaturally(new BlockPosition(b).toLocation(), new ItemStack(type.getId()));
 				}
 			}
 		}

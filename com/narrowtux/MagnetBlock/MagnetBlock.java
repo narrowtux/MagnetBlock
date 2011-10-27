@@ -19,13 +19,19 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.Selection;
+
 public class MagnetBlock extends JavaPlugin {
 	public Logger log = null;
 	private HashMap<String, MagnetBlockStructure> structures = new HashMap<String, MagnetBlockStructure>();
@@ -35,6 +41,8 @@ public class MagnetBlock extends JavaPlugin {
 	public static MagnetBlock instance;
 
 	public static Permission permissions;
+	
+	public WorldEditPlugin weplugin;
 	
 	public MagnetBlock(){
 		instance = this;
@@ -65,10 +73,15 @@ public class MagnetBlock extends JavaPlugin {
 		pm.registerEvent(Type.REDSTONE_CHANGE, blockListener, Priority.Normal, this);
 		//pm.registerEvent(Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 		PluginDescriptionFile pdf = getDescription();
+		weplugin = getWorldEdit();
+		if (weplugin != null)
+		{
+			log.log(Level.INFO, "WorldEdit found and linked");
+		}
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been enabled.");
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args){
+	public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args) {
 		MagnetBlockPlayer player = null;
 		if(sender instanceof Player){
 			player = MagnetBlockPlayer.getPlayerByName(((Player)sender).getName());
@@ -90,7 +103,7 @@ public class MagnetBlock extends JavaPlugin {
 			 *******************/
 			if(args.length==1){
 				String name1 = args[0];
-				MagnetBlockStructure structure = new MagnetBlockStructure();
+				MagnetBlockStructure structure = new MagnetBlockStructure(name1);
 				structures.put(name1, structure);
 				player.setEditing(structure);
 				player.getPlayer().sendMessage(ChatColor.GREEN+"Place your blocks now!");
@@ -129,6 +142,16 @@ public class MagnetBlock extends JavaPlugin {
 						m.setStructure(null);
 					}
 					structures.remove(args[0]);
+					
+					File dataFolder = getDataFolder(); 
+					File sdir = new File(dataFolder.getAbsolutePath()+"/"+args[0]+".structure");
+					File structureFile = new File(sdir.getAbsolutePath()+"/info.csv"); 
+					structureFile.delete();
+					File blocksFile = new File(sdir.getAbsolutePath()+"/blocks.csv"); 
+					blocksFile.delete();
+					File magnetsFile = new File(sdir.getAbsolutePath()+"/magnets.csv"); 
+					magnetsFile.delete();
+					sdir.delete(); 
 					sender.sendMessage(ChatColor.GREEN+"Structure deleted.");
 					save();
 					return true;
@@ -149,6 +172,59 @@ public class MagnetBlock extends JavaPlugin {
 				player.getPlayer().sendMessage(ChatColor.RED+"You aren't editing any structures.");
 			}
 			return true;
+		} else if(cmd.getName().equals("checkstructure")){
+			/*******************
+			 * CHECK STRUCTURE *
+			 *******************/
+			// Check if all blocks in WorldEdit region belong to given structure
+			// Add missing blocks if any
+			if (weplugin == null)
+			{
+				this.log.log(Level.WARNING, "This command needs WorldEdit, but none found. Sorry!");
+				player.getPlayer().sendMessage(ChatColor.RED+"This command needs WorldEdit, but none found. Sorry!");
+				return true;
+			}
+			
+			if(args.length==1){
+				if(!(structures.containsKey(args[0])))
+				{
+					sender.sendMessage(ChatColor.RED+"This Structure does not exist.");
+					return true;
+				}
+				//return true;
+				Selection selection = weplugin.getSelection(player.getPlayer());
+				MagnetBlockStructure structure = structures.get(args[0]);
+				Location p1 = selection.getMinimumPoint();
+				Location p2 = selection.getMaximumPoint();
+				World w = structure.getBlocks().get(0).getBlock().getWorld();
+				for (int x = p1.getBlockX(); x < p2.getBlockX(); x++)
+				{
+					for (int y = p1.getBlockY(); y < p2.getBlockY(); y++)
+					{
+						for (int z = p1.getBlockZ(); z < p2.getBlockZ(); z++)
+						{
+							Location l = new Location(w, x, y, z);
+							if (selection.contains(l))
+							{
+								Block b = l.getBlock();
+								if (b == null)
+									continue;
+								if (b.getType() == Material.AIR)
+									continue;
+								
+								MagnetBlockBlock mb = new MagnetBlockBlock(b);							
+								if (!(structure.getBlocks().contains(mb)))
+								{
+									structure.addBlock(mb);
+									log.log(Level.INFO, "Block "+b.getType().toString() + " at ["+x+";"+y+";"+z+"] added");
+								}
+							}
+						}
+					}
+				}
+				
+				return true;
+			}
 		} else if(cmd.getName().equals("structurelist")){
 			/*******************
 			 *       LIST      *
@@ -448,7 +524,7 @@ public class MagnetBlock extends JavaPlugin {
 					continue;
 				}
 				/**BEGIN info.csv**/
-				MagnetBlockStructure structure = new MagnetBlockStructure();
+				MagnetBlockStructure structure = new MagnetBlockStructure(name);
 				structures.put(name, structure);
 				File structInfo = new File(structDir.getAbsolutePath()+"/info.csv");
 				if(!structInfo.exists()){
@@ -493,7 +569,9 @@ public class MagnetBlock extends JavaPlugin {
 						if(key.equals("world")){
 							String [] values = value.split(",");
 							if(values.length==2){
-								World w = getServer().createWorld(values[0], Environment.valueOf(values[1]));
+								WorldCreator wc = new WorldCreator(values[0]);
+								wc.environment(Environment.valueOf(values[1]));
+								World w = getServer().createWorld(wc);
 								if(w!=null)
 								{
 									pos.setWorld(w);
@@ -588,4 +666,20 @@ public class MagnetBlock extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
+	
+    public WorldEditPlugin getWorldEdit() {
+        Plugin worldEdit = getServer().getPluginManager().getPlugin("WorldEdit");
+        if (worldEdit == null) {
+            //throw new CommandException("WorldEdit does not appear to be installed.");
+        	return null;
+        }
+        
+        if (worldEdit instanceof WorldEditPlugin) {
+            return (WorldEditPlugin) worldEdit;
+        } else {
+            //throw new CommandException("WorldEdit detection failed (report error).");
+        	return null;
+        }
+    }
+    
 }
