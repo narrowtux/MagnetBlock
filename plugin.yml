@@ -16,6 +16,10 @@ commands:
         usage: /editstructure {name}
         aliases: 
             - mbes
+    checkstructure:
+        usage: /checkstructure {name}
+        aliases:
+            - mbvs
     removestructure:
         usage: /removestructure {name}
         aliases: 

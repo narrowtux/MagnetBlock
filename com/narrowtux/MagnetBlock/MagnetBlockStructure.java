@@ -23,6 +23,22 @@ public class MagnetBlockStructure {
 	private int animationId = 0;
 	private boolean ironset = false;
 	private List<MagnetBlockMagnet> magnets = new ArrayList<MagnetBlockMagnet>();
+	private String name;
+	
+	public MagnetBlockStructure(String sname)
+	{
+		name = sname;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public String toString()
+	{
+		return name;
+	}
 
 	public List<MagnetBlockMagnet> getMagnets() {
 		return magnets;
@@ -199,7 +215,7 @@ public class MagnetBlockStructure {
 					}
 					BlockPosition pl = new BlockPosition(entity.getLocation());
 					Block b = pl.getWorld().getBlockAt(pl.toLocation());
-					Block down = b.getFace(BlockFace.DOWN);
+					Block down = b.getRelative(BlockFace.DOWN);
 					BlockPosition dp = new BlockPosition(down);
 					MagnetBlockBlock dm = MagnetBlockBlock.getBlock(dp);
 					MagnetBlockBlock mb = MagnetBlockBlock.getBlock(pl);
