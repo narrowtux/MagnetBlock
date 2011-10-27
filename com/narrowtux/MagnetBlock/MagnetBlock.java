@@ -222,6 +222,8 @@ public class MagnetBlock extends JavaPlugin {
 						}
 					}
 				}
+				
+				return true;
 			}
 		} else if(cmd.getName().equals("structurelist")){
 			/*******************
