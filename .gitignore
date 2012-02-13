@@ -56,4 +56,9 @@ build.xml
 # IntelliJ IDEA files #
 #######################
 .idea
-.iml
+.imlClass
+*.iml
+
+# Other stuff #
+###############
+diagram.graffle

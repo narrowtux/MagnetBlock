@@ -53,14 +53,12 @@ public class MagnetBlock extends JavaPlugin {
 		MagnetBlockMagnet.plugin = this;
 	}
 
-	@Override
 	public void onDisable() {
 		save();
 		PluginDescriptionFile pdf = getDescription();
 		log.log(Level.INFO, pdf.getName()+" version "+pdf.getVersion()+" by "+pdf.getAuthors()+" has been disabled.");
 	}
 
-	@Override
 	public void onEnable() {
 		config = new Configuration(new File(getDataFolder().getAbsolutePath()+"/magnetblock.cfg"));
 		permissions = new Permission(getDataFolder());
@@ -681,5 +679,4 @@ public class MagnetBlock extends JavaPlugin {
         	return null;
         }
     }
-    
 }

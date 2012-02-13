@@ -27,7 +27,7 @@ public class StructureAnimation implements Runnable {
 		v.setZ(Math.round(v.getZ()));
 		neededsteps = (int) (toPos.clone().subtract(currentPos.clone()).length()/v.length());
 	}
-	@Override
+
 	public void run() {
 		Vector v ;
 		v = toPos.clone().subtract(currentPos.clone());
