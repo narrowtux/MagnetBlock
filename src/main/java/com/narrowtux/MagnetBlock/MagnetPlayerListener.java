@@ -6,14 +6,15 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 //import org.bukkit.inventory.ItemStack;
 
-public class MagnetPlayerListener extends PlayerListener {
+public class MagnetPlayerListener implements Listener {
 	static public MagnetBlock plugin;
-	@Override
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
 		Vector direction = null;
@@ -67,7 +68,7 @@ public class MagnetPlayerListener extends PlayerListener {
 		}
 	}
 
-	@Override
+	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event){
 		MagnetBlockPlayer player = MagnetBlockPlayer.getPlayerByName(event.getPlayer().getName());
 		if(player.hasRight()){
