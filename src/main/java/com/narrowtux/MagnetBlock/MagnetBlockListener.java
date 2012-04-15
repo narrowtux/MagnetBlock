@@ -4,16 +4,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
-public class MagnetBlockListener extends BlockListener {
+public class MagnetBlockListener implements Listener {
 	public static MagnetBlock plugin;
 	public MagnetBlockListener(MagnetBlock instance){
 		plugin=instance;
 	}
-	@Override
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event)
 	{
 		if(event.isCancelled())
@@ -38,7 +39,7 @@ public class MagnetBlockListener extends BlockListener {
 		}
 	}
 
-	@Override
+	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
 	{
 		MagnetBlockBlock block = MagnetBlockBlock.getBlock(new BlockPosition(event.getBlock()));
@@ -64,7 +65,7 @@ public class MagnetBlockListener extends BlockListener {
 		}
 	}
 
-	@Override
+	@EventHandler
 	public void onBlockRedstoneChange(BlockRedstoneEvent event)
 	{
 		if(event.getNewCurrent()==0)

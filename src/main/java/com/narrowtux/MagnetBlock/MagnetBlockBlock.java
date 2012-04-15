@@ -17,7 +17,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.Jukebox;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -34,7 +34,7 @@ public class MagnetBlockBlock {
 	private short burnTime = 0;
 	private short cookTime = 0;
 	private int delay = 0;
-	private CreatureType creature = null;
+	private EntityType creature = null;
 	private Material record = null;
 	private Note note = null;
 
@@ -190,7 +190,7 @@ public class MagnetBlockBlock {
 			if (state instanceof CreatureSpawner)
 			{
 				CreatureSpawner spawner = (CreatureSpawner) state;
-				creature = spawner.getCreatureType();
+				creature = spawner.getSpawnedType();
 				delay = spawner.getDelay();
 			}
 			if (state instanceof Jukebox)
@@ -243,7 +243,7 @@ public class MagnetBlockBlock {
 			if (state instanceof CreatureSpawner)
 			{
 				CreatureSpawner spawner = (CreatureSpawner) state;
-				spawner.setCreatureType(creature);
+				spawner.setSpawnedType(creature);
 				spawner.setDelay(delay);
 			}	
 			if (state instanceof Jukebox)
